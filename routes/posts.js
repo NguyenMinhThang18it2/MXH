@@ -25,9 +25,14 @@ var upload = multer({ storage: storage });
 router.get('/tablepost', controller.getPosts);
 /* Post users listing. */
 router.post('/tablepost', upload.single('image'), controller.postPost);
+// router.postnotfile('/tablepost', controller.postPostnotfile);
 /* Delete user */
 router.get('/tablepost/delete/:id', controller.delete);
 // Update user
 router.post('tablepost/update/:id', controller.edit);
-
+// ajax
+// Like
+router.post('/tablepost/likeposts', controller.likeposts);
+//get comment
+router.get('/');
 module.exports = router;

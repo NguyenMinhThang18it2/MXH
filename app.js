@@ -15,13 +15,16 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var postsRouter = require('./routes/posts');
 var storyRouter = require('./routes/story');
+var themeRouter = require('./routes/themestatus');
+var commentRouter = require('./routes/comment');
 // api
 var apiloginRouter = require('./routes/api/login.api');
 var apipostsRouter = require('./routes/api/posts.api');
 var apistoryRouter = require('./routes/api/story.api');
+var apithemeRouter = require('./routes/api/themestatus.api');
 
 var app = express();
-
+var io = require('./socket/socket');
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); 
 
@@ -48,10 +51,13 @@ app.use('/logout', function(req, res){
 app.use('/admin',auth.authentication, usersRouter);
 app.use('/admin',auth.authentication, postsRouter);
 app.use('/admin',auth.authentication, storyRouter);
+app.use('/admin',auth.authentication, themeRouter);
+app.use('/admin',auth.authentication, commentRouter);
 //api
 app.use('/api', apiloginRouter);
 app.use('/api', apipostsRouter);
 app.use('/api', apistoryRouter);
+app.use('/api', apithemeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

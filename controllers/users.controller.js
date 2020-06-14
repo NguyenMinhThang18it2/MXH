@@ -18,7 +18,8 @@ module.exports.postUser = async (req, res) => {
     let newuser = await new User({
         username: req.body.username,
         email: req.body.email,
-        password: passwordHash.generate(req.body.password)
+        password: passwordHash.generate(req.body.password),
+        avata:'avata-male-default.jpg'
     });
     newuser.save((err, user) => {
         if(err) {

@@ -5,6 +5,10 @@ var PostsSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: 'User' 
     }
     ,
+    level:{
+        type:Number,
+        require:true
+    },
     document: 
     {
         type:String,
@@ -28,11 +32,11 @@ var PostsSchema = new mongoose.Schema({
         }
     }
     ,
-    numberLike: 
-    {
-        type:Number,
-        required: true
-    },
+    numberLike:[{
+        iduserLike:{
+            type:mongoose.Schema.Types.ObjectId, ref: 'User' 
+        }
+    }],
     numberCmt: 
     {
         type:Number,

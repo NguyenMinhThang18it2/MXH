@@ -4,7 +4,6 @@ var Storys = require('../models/story.models');
 
 //
 module.exports.getStory = async (req, res) => {
-    console.log("Vào rồi");
   await Storys.find({}).populate('iduser','username').exec(function (err, storys) {
     if (err) return handleError(err);
     res.render('./admin/layoutadmin/story',{storysall:storys});
@@ -33,7 +32,7 @@ module.exports.postStory = async (req, res) => {
             image: fileimage,
             video: filevideo,
         },
-        numberLike: 0,
+        numberLike: [],
         createdAt: new Date(),
         updatedAt: new Date()
     });

@@ -21,8 +21,12 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 
-// get data
+// get posts
 router.get('/posts', controller.getPosts);
-// post data
+// post posts
 router.post('/posts', upload.single('image'), controller.postPosts);
+// router.post('/postbackground' , controller.postBackground);
+//Delete posts
+
+//Edit posts
 module.exports = router;

@@ -3982,4 +3982,115 @@ ul.breadcome-menu {
 	float: left;
 	margin-left: 5px;
 }
+.table_like_cmt{
+	margin-top: 10px;
+}
+.table_like_cmt tr th{
+	border-color: #ffffff !important;
+	text-align: center;
+	
+}
+.table_like_cmt tr th:hover{
+	background: #585858;
+}
+.commentuserposts{
+	margin: -20px 0 0 0;
+}
+.avatauserposts img{
+	border: 2px solid #585858;
+	border-radius: 100%;
+	width: 40px;
+	height: 40px;
+	float: left;
+	margin-right: 10px;
+}
+.commentuserposts .divtextcomment{
+	padding: 1%;
+	margin-left: 8%;
+	position: relative;
+}
+.commentuserposts .divtextcomment .textcomment{
+	float: left;
+	padding: 7px 15px 5px 10px;
+	border-radius: 20px;
+	background: #646464;
+	max-width: 100%;
+	
+}
+/* .commentuserposts .divtextcomment .textcomment:hover{
 
+} */
+.commentuserposts .divtextcomment .textcomment span #textcmtuserposts{
+	margin-left: 2px;
+	color: #d3d3d3;
+	font-size: 14px;
+}
+.commentuserposts .divtextcomment #showmenucomment{
+	position: relative;
+	float: right;
+}
+.commentuserposts .divtextcomment img{
+	margin-top: 5px;
+	max-width: 50%;
+	border-radius: 25px;
+}
+.replycomment span {
+	font-size: 12px;
+}
+.replycomment span a:hover{
+	color: blue;
+}
+.newtextcomment {
+	position: relative;
+	padding: 10px;
+	margin-bottom: 10px;
+
+}
+.newtextcomment .newtext{
+	position: relative;
+	margin-left: 8%;
+}
+.newtextcomment .newtext input{
+	display: none;
+ }
+ .newtextcomment .newtext .fa-camera{
+	position: absolute;
+	top: 8px;
+	right: 30px;
+	font-size: 16px;
+	color: #b3b2b2;
+ }
+ .newtextcomment .newtext .fa-times{
+	position: absolute;
+	top: 70px;
+	left: 50%;
+	font-size: 20px;
+	color: #ffffff;
+	z-index: 1;
+ }
+ 
+ .newtextreplycomment {
+	position: relative;
+	padding: 10px;
+}
+.newtextreplycomment .newtext{
+	position: relative;
+	margin-left: 9%;
+}
+.newtextreplycomment .newtext input{
+	display: none;
+ }
+ .newtextreplycomment .newtext .fa-camera{
+	position: absolute;
+	top: 8px;
+	right: 30px;
+	font-size: 16px;
+ }
+ .newtextreplycomment .newtext .fa-times{
+	position: absolute;
+	top: 70px;
+	left: 50%;
+	font-size: 20px;
+	color: #ffffff;
+	z-index: 1;
+ }

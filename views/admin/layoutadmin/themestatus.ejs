@@ -1,0 +1,140 @@
+
+<link rel="stylesheet" href="../../../css/c3.min.css">
+<link rel="stylesheet" href="../../../css/data-table/bootstrap-table.css">
+<link rel="stylesheet" href="../../../css/data-table/bootstrap-editable.css">
+
+
+    <!-- Breadcome start-->
+    <div class="breadcome-area mg-b-30 small-dn">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcome-list map-mg-t-40-gl shadow-reset">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="breadcome-heading">
+                                <h2>Welcome To Adminpro</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul class="breadcome-menu">
+                                <li><a href="#">Home</a> <span class="bread-slash">/</span>
+                                </li>
+                                <li><span class="bread-blod">Data Table</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breadcome End-->
+<!-- Creat uers-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #393939;">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color: #ffffff;font-weight: bold;font-size: 30px;" id="exampleModalLabel">Creat new user</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#ffffff;font-size: 30px;margin-top: -8%;">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="/admin/theme" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="theme">Theme</label>
+                        <input type="file" class="form-control" id="theme" name="theme">
+                    </div>   
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Edit user -->
+<div class="modal fade" id="exampleModaltrue" tabindex="-1" role="dialog" aria-labelledby="exampleModaltrueLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #393939;">
+                <div class="modal-body">
+                    <img id="showimg" src="" alt="" style="width: 100%;">
+                </div>
+        </div>
+    </div>
+</div>
+<!-- table uers-->
+<div class="data-table-area mg-b-15">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="sparkline13-list shadow-reset">
+                    <div class="sparkline13-hd">
+                        <div class="main-sparkline13-hd">
+                            <h1>Projects <span class="table-project-n">Data users</span> Theme Status</h1>
+                            <div class="sparkline13-outline-icon">
+                                <span class="sparkline13-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                                <span><i class="fa fa-wrench"></i></span>
+                                <span class="sparkline13-collapse-close"><i class="fa fa-times"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sparkline13-graph">
+                        <div class="datatable-dashv1-list custom-datatable-overright">
+                            <div id="toolbar">
+                                <select class="form-control">
+                                    <option value="">Export Basic</option>
+                                    <option value="all">Export All</option>
+                                    <option value="selected">Export Selected</option>
+                                </select>
+                            </div>
+                            <style>table thead tr th {text-align: center;}</style>
+                            <div id="table" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="false" data-show-pagination-switch="true" data-show-refresh="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true" data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
+                                <div class="row">
+                                <%  var n = 0;
+                                    themes.forEach(function(theme){ %>
+                                    <div class="col-sm-3" style="margin-bottom: 2%;">
+                                        <div class="card text-center">
+                                            <img id="imgtheme<%= n++ %>" onclick="viewimg('../../../uploads/<%= theme.themestatus %>')" src="../../../uploads/<%= theme.themestatus %>" style="height: 200px;margin-bottom: 2%;" alt="" data-toggle="modal" data-target="#exampleModaltrue">
+                                            <div class="card-body">
+                                                <a class="btn btn-danger" href="theme/delete/<%= theme._id %>"><i class="far fa-trash-alt"></i> Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- place the scripts at the end of the html page -->
+
+<script>
+    function viewimg(abc){
+        $('img#showimg').attr('src', abc);
+    }
+</script>
+<script src="../../../js/counterup/jquery.counterup.min.js"></script>
+<script src="../../../js/counterup/waypoints.min.js"></script>
+<script src="../../../js/peity/jquery.peity.min.js"></script>
+<script src="../../../js/peity/peity-active.js"></script>
+<script src="../.././js/sparkline/jquery.sparkline.min.js"></script>
+<script src="../../../js/sparkline/sparkline-active.js"></script>
+<script src="../../../js/data-table/bootstrap-table.js"></script>
+<script src="../../../js/data-table/tableExport.js"></script>
+<script src="../../../js/data-table/data-table-active.js"></script>
+<script src="../../../js/data-table/bootstrap-table-editable.js"></script>
+<script src="../../../js/data-table/bootstrap-editable.js"></script>
+<script src="../../../js/data-table/bootstrap-table-resizable.js"></script>
+<script src="../../../js/data-table/colResizable-1.5.source.js"></script>
+<script src="../../../js/data-table/bootstrap-table-export.js"></script>
+
+

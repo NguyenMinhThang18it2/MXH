@@ -13,6 +13,6 @@ module.exports.authentication = async function(req, res, next){
     
 
     res.locals.user = user;
-    console.log(user);
+    // console.log(user);
     next();
 };

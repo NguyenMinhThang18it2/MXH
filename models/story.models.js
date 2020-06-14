@@ -30,11 +30,11 @@ var StorysSchema = new mongoose.Schema({
         }
     }
     ,
-    numberLike: 
-    {
-        type:Number,
-        required: true
-    },
+    numberLike:[{
+        iduserLike:{
+            type:mongoose.Schema.Types.ObjectId, ref: 'User' 
+        }
+    }],
     createdAt: 
     {
         type: Date, 

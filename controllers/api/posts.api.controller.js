@@ -32,12 +32,13 @@ module.exports.postPosts = async (req, res) => {
     let newPost = await new Posts({
         iduser: req.body.iduser,
         document: req.body.document,
+        level: 1,
         file:{
             image: fileimage,
             video: filevideo,
             background: background
         },
-        numberLike: 0,
+        numberLike: [],
         numberCmt: 0,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -55,4 +56,34 @@ module.exports.postPosts = async (req, res) => {
         });
         }
     });
+};
+//
+module.exports.postBackground = async (req, res) => {
+  let newPost = await new Posts({
+    iduser: req.body.iduser,
+    document: req.body.document,
+    level: 1,
+    file:{
+        image: " ",
+        video: " ",
+        background: req.body.background
+    },
+    numberLike: [],
+    numberCmt: 0,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
+  await newPost.save((err, posts) => {
+      if(err) {
+      res.json({
+          success: false,
+          msg: "Failed to add author"
+      });
+      } else {
+        res.json({
+          success: true,
+          msg: "Posts new success"
+      });
+      }
+  });
 };
