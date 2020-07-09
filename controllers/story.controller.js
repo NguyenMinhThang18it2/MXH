@@ -6,7 +6,7 @@ var Storys = require('../models/story.models');
 module.exports.getDataStorys = async (req, res) => {
   await Storys.find({}).populate('iduser','username').exec(function (err, storys) {
     if (err) throw err;
-    res.render('./admin/layoutadmin/story');
+    res.render('./admin/layoutadmin/story',{storysall:storys});
     // res.send(storys);
   });
 };

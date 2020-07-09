@@ -16,7 +16,7 @@ var storage = multer.diskStorage({
   });
 var upload = multer({ storage: storage });
 // Get
-router.get('/theme', controller.getTheme);
+router.get('/theme', controller.getDataTheme);
 // Post 
 router.post('/theme', upload.single('theme'), controller.postTheme);
 // //delete

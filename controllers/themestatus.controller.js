@@ -1,6 +1,6 @@
 var Themestatus = require('../models/themestatus.models');
 
-module.exports.getTheme = async (req, res) => {
+module.exports.getDataTheme = async (req, res) => {
     await Themestatus.find({}, (err, data) => {
         if(err) {
             res.json({
@@ -9,6 +9,7 @@ module.exports.getTheme = async (req, res) => {
               }); 
         }else{
             res.render('./admin/layoutadmin/themestatus',{themes:data});
+            // res.send(data);
         }
     });
 };
