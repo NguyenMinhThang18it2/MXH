@@ -32,7 +32,6 @@ router.get('/tablepost/delete/:id', controller.delete);
 router.post('tablepost/update/:id', controller.edit);
 // ajax
 // Like
-router.post('/tablepost/likeposts', controller.likeposts);
+router.get('/tablepost/likeposts', controller.likeposts);
 //get comment
-router.get('/');
 module.exports = router;

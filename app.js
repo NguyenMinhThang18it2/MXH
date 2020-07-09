@@ -6,9 +6,12 @@ var bodyParser = require('body-parser');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var jwt = require('jsonwebtoken');
 var expressLayouts = require('express-ejs-layouts');
+//authentication
 var auth = require('./controllers/auth/authentication.controller');
-
+var authJWT = require('./controllers/auth/jsonwebtoken.controller');
+// db
 var mongodb = require('./db/connectdb');
 // router
 var indexRouter = require('./routes/index');
@@ -17,11 +20,15 @@ var postsRouter = require('./routes/posts');
 var storyRouter = require('./routes/story');
 var themeRouter = require('./routes/themestatus');
 var commentRouter = require('./routes/comment');
+var followRouter = require('./routes/follower');
+var friendRouter = require('./routes/friends');
+var notification = require('./routes/notification');
 // api
 var apiloginRouter = require('./routes/api/login.api');
 var apipostsRouter = require('./routes/api/posts.api');
 var apistoryRouter = require('./routes/api/story.api');
 var apithemeRouter = require('./routes/api/themestatus.api');
+var profileRouter  = require('./routes/api/profile.api');
 
 var app = express();
 var io = require('./socket/socket');
@@ -53,12 +60,29 @@ app.use('/admin',auth.authentication, postsRouter);
 app.use('/admin',auth.authentication, storyRouter);
 app.use('/admin',auth.authentication, themeRouter);
 app.use('/admin',auth.authentication, commentRouter);
+app.use('/admin',auth.authentication, followRouter);
+app.use('/admin',auth.authentication, friendRouter);
+app.use('/admin',auth.authentication, notification);
 //api
 app.use('/api', apiloginRouter);
-app.use('/api', apipostsRouter);
-app.use('/api', apistoryRouter);
-app.use('/api', apithemeRouter);
+app.use('/api', authJWT.authenticationJWT, apipostsRouter);
+app.use('/api', authJWT.authenticationJWT, apistoryRouter);
+app.use('/api', authJWT.authenticationJWT, apithemeRouter);
+app.use('/api', authJWT.authenticationJWT, profileRouter);
 
+app.use('/test', authJWT.authenticationJWT, (req, res) =>{
+  console.log("con kẹt"+ req.token);
+  
+  jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, data)=>{
+    if(err) res.send(err);
+    else{
+      res.json({
+        msg:' helllo cai dầu buồi',
+        data: data
+      });  
+    }
+  });
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

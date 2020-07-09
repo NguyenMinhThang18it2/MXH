@@ -15,7 +15,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 /* GET users listing. */
-router.get('/tablestory', controller.getStory);
+router.get('/tablestory', controller.getDataStorys);
 /* Post users listing. */
 router.post('/tablestory', upload.single('image'), controller.postStory);
 /* Delete user */

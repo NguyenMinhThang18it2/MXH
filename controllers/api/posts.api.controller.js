@@ -47,7 +47,7 @@ module.exports.postPosts = async (req, res) => {
         if(err) {
         res.json({
             success: false,
-            msg: "Failed to add author"
+            msg: "Posts new False"
         });
         } else {
           res.json({
@@ -77,7 +77,7 @@ module.exports.postBackground = async (req, res) => {
       if(err) {
       res.json({
           success: false,
-          msg: "Failed to add author"
+          msg: "Posts new False"
       });
       } else {
         res.json({

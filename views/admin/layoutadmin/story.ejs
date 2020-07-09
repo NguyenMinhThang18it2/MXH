@@ -66,43 +66,7 @@
     </div>
 </div>
 <!-- Edit post -->
-<div class="modal fade" id="exampleModaltrue" tabindex="-1" role="dialog" aria-labelledby="exampleModaltrueLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="background-color: #393939;">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color: #ffffff;font-weight: bold;font-size: 30px;" id="exampleModaltrueLabel">Edit user</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#ffffff;font-size: 30px;margin-top: -8%;">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="formEdit" method="POST" action="">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="name">UserName</label>
-                        <input type="text" name="username" class="form-control" id="editname">
-                        </div>
-                        <div class="form-group">
-                        <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="editemail" name="email" aria-describedby="emailHelp">
-                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                        </div>
-                        <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" name="password" id="editpassword">
-                        </div>
-                        <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 <!-- table uers-->
 <div class="data-table-area mg-b-15">
     <div class="container-fluid">
@@ -152,15 +116,16 @@
                                         <td data-username="<%= story.iduser.username %>"><%= story.iduser.username %></td>
                                         <td data-email="<%= story.text.document %>"><%= story.text.document %></td>
                                         <td data-email="<%= story.text.color %>"><%= story.text.color %></td>
-                                        <td data-password="<%= story.file.image %>"><img src="../../../uploads/<%= story.file.image %>" alt="" height="100dp" width="100dp"></td>    
+                                        <td >
+                                            <% for(var i = 0 ; i < story.file.length ; i++){ %>
+                                            <img src="../../../uploads/<%= story.file[i] %>" alt="" height="100dp" width="100dp">     
+                                            <%} %>   
+                                        </td>
                                         <td data-password="<%= story.numberLike %>"><%= story.numberLike %></td>
                                         <td data-password="<%= story.createdAt %>"><%= story.createdAt %></td>
                                         <td data-password="<%= story.updatedAt %>"><%= story.updatedAt %></td>
                                         <td class="datatable-ct" data-iduser="<%= user._id %>">
                                             <a class="btn btn-danger" href="tablestory/delete/<%= story._id %>"><i class="far fa-trash-alt"></i></a>
-                                            <button type="button" class="btn btn-warning" id="editbutton" data-toggle="modal" data-target="#exampleModaltrue">
-                                                <i class="far fa-edit"></i>
-                                            </button>
                                         </td>
                                     </tr>
                                     <% }) %>

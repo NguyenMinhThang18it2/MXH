@@ -256,12 +256,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                   <% postsall.forEach(function(posts){  %>
+                                   <%   postsall.forEach(function(posts){  %>
                                     <tr>  
                                         <!-- <input type="hidden" id="iduser" value="<%= user._id %>"> -->
                                         <td></td>
                                         
-                                        <td data-username="<%= posts.iduser.username %>" data-postsid="<%= posts._id %>" data-avatauser="<%= posts.iduser.avata %>"></td>><%= posts.iduser.username %></td>
+                                        <td data-username="<%= posts.iduser.username %>" data-postsid="<%= posts._id %>" data-avatauser="<%= posts.iduser.avata %>"><%= posts.iduser.username %></td>
                                         <td data-document="<%= posts.document %>"><%= posts.document %></td>
                                         <% if(posts.file.image != " "){ %>
                                         <td  data-image="<%= posts.file.image %>" id="checkposts" data-toggle="modal" data-target="#exampleModalposts">
@@ -319,7 +319,7 @@
     </div>
 </div>
 <!-- place the scripts at the end of the html page -->
-<script src="../../../js/socket.io/socket.posts.js"></script>
+
 <script src="../../../js/posts.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="../../../js/counterup/jquery.counterup.min.js"></script>

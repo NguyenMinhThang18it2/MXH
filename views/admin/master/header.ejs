@@ -101,63 +101,59 @@
                             </li>
                             <li class="nav-item">
                                 <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle"><i class="fa fa-bell-o" aria-hidden="true"></i><span class="indicator-nt"></span></a>
-                                <div role="menu" class="notification-author dropdown-menu animated flipInX">
+                                <div id="notify" role="menu" class="notification-author dropdown-menu animated flipInX">
                                     <div class="notification-single-top">
                                         <h1>Notifications</h1>
                                     </div>
-                                    <ul class="notification-menu">
-                                        <li>
-                                            <a href="#">
-                                                <div class="notification-icon">
-                                                    <span class="adminpro-icon adminpro-checked-pro"></span>
-                                                </div>
-                                                <div class="notification-content">
-                                                    <span class="notification-date">16 Sept</span>
-                                                    <% if(typeof user == "undefined"){ %>
-                                                        <h2></h2>  
-                                                    <% }else{%>
-                                                        <h2><%= user.username %></h2>  
-                                                    <%} %>
-                                                    <p>Please done this project as soon possible.</p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="notification-icon">
-                                                    <span class="adminpro-icon adminpro-cloud-computing-down"></span>
-                                                </div>
-                                                <div class="notification-content">
-                                                    <span class="notification-date">16 Sept</span>
-                                                    <h2>Sulaiman din</h2>
-                                                    <p>Please done this project as soon possible.</p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="notification-icon">
-                                                    <span class="adminpro-icon adminpro-shield"></span>
-                                                </div>
-                                                <div class="notification-content">
-                                                    <span class="notification-date">16 Sept</span>
-                                                    <h2>Victor Jara</h2>
-                                                    <p>Please done this project as soon possible.</p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="notification-icon">
-                                                    <span class="adminpro-icon adminpro-analytics-arrow"></span>
-                                                </div>
-                                                <div class="notification-content">
-                                                    <span class="notification-date">16 Sept</span>
-                                                    <h2>Victor Jara</h2>
-                                                    <p>Please done this project as soon possible.</p>
-                                                </div>
-                                            </a>
-                                        </li>
+                                    <ul class="notification-menu" id="shownotify">
+                                        <% 
+                                        function timer(t) {
+                                            w = Math.floor(t / (1000 * 60 * 60 * 24 * 7)),
+                                            d = Math.floor(t / (1000 * 60 * 60 * 24)),
+                                            h = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                                            m = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)),
+                                            s = Math.floor((t % (1000 * 60)) / 1000);
+                                            if(w>0) return w + ' week ago ';
+                                            else if(d>0) return d + ' day ago';
+                                            else if(h>0) return h + ' hour ago';
+                                            else if(m>0) return m + ' minute ago';
+                                            else if(s>0) return 'just now';
+                                        }%>
+
+                                        <%    if(typeof notification === "object"){ 
+                                                let notificationabc = notification.reverse();
+                                                let statusabc = ''; 
+                                                notificationabc.forEach(function(notify){
+                                                if(notify.status !== true){
+                                                    statusabc = 'background: #888888';
+                                                } 
+                                                let timecreated = notify.createdAt;
+                                                let diff = Math.abs(new Date() - new Date(timecreated));
+                                                let time = timer(diff);
+                                                %>
+                                                <li style ="width: 100%;<%= statusabc %>;">
+                                                    <a href="#">
+                                                        <div class="notification-icon">
+                                                            <img src="../../../uploads/<%= notify.iduserNotify.avata %>" alt=""style="border-radius:100%;width:100%;height:100%;margin-top: -3px">
+                                                        </div>
+                                                        <div class="notification-content">
+                                                            <span class="notification-date"><%= time %></span>
+                                                            <h2><%= notify.iduserNotify.username %></h2>
+                                                            <p><% if(notify.title === 'comment'){ %>
+                                                                    Đã bình luận bài viết của <%= notify.idPosts.iduser.username %>
+                                                                <% } %>
+                                                                <% if(notify.title === 'likeposts'){ %>
+                                                                    Đã like bài viết của bạn
+                                                                <% } %>
+                                                                <% if(notify.title === 'newposts'){ %>
+                                                                    Đã đăng một bài viết mới
+                                                                <% } %>
+                                                            </p>
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            <% }); %>
+                                        <%} %>
                                     </ul>
                                     <div class="notification-view">
                                         <a href="#">View All Notification</a>

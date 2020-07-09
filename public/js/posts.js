@@ -1,5 +1,6 @@
-
-    $('table').on('click', '#checkposts', function () {
+    
+    $('table').on('click', '#checkposts', async function () {
+        
         var $tr = $(this).closest('tr');
         var idposts = $tr.find('td[data-postsid]').data('postsid');
         var username = $tr.find('td[data-username]').data('username');
@@ -13,7 +14,7 @@
         var update = $tr.find('td[data-update]').data('update');
         var diff = Math.abs(new Date() - new Date(update));
         // alert(avatauser);
-
+        await socket.emit('join room cmt',idposts);
         if(typelikenumber === 0){
             if($('i#buttonlikeposts').hasClass('fas')){
                 $('i#buttonlikeposts').removeClass('fas');
@@ -38,11 +39,12 @@
         if(image){
             $('div#balabala').html('<img src="../../../uploads/'+image+'" alt="">');
         };
-        if(video.length>5){
+        if(video.length > 5){
             $('div#balabala').html('<video id="playvideoposts" width="320" height="240" controls autoplay><source src="../../../uploads/'+video+'" type="video/mp4"></video>');
         };
         
         // document.getElementById("myImg").src = "hackanm.gif";
+        
     });
     //
     $('#exampleModalposts').on('shown.bs.modal', function () {
@@ -51,6 +53,8 @@
         
     });
     $('#exampleModalposts').on('hidden.bs.modal', function () {
+        let idpostsajax = document.getElementById('idpostsmodal').innerHTML;  
+        socket.emit('leave room cmt', idpostsajax);
         $('div#showcomment').html("");
         $('#playvideoposts')[0].pause();
         // $('#playvideotable')[0].play();
@@ -85,59 +89,6 @@
         else if(m>0) return m + ' minute ago';
         else if(s>0) return 'just now';
     }
-    // 
-    // like ajax
-    $('#likepostsmodal').on('click', function(e) {
-        var idpostsajax = document.getElementById('idpostsmodal').innerHTML;
-        var action = "";
-        e.preventDefault();
-        $('#buttonlikeposts').toggleClass('far').toggleClass('fas');
-        if($('#buttonlikeposts').hasClass('far')){
-            action = "dislike"
-        }else if($('#buttonlikeposts').hasClass('fas')){
-            action = "like"
-        }
-        $.ajax({
-            type: "POST",
-            url: "http://localhost:3000/admin/tablepost/likeposts",
-            contentType: "application/json",
-            data: JSON.stringify({ 
-                action: action,
-                id: idpostsajax,
-                iduserLike: '<%= user.username %>' //không quan trọng
-            }),
-            success: (data) => {
-                var datas = JSON.parse(data);
-                if(data != ""){
-                    updatelikeposts(datas); 
-                    var datalike = datas.userlike;
-                    var abc = 0;
-                    var idtblike = document.getElementById('idpostsmodal').innerHTML;
-                    var thisuser = document.getElementById('idthisuserlogin').innerHTML;
-                    datalike.forEach( like => {
-                        if(String(like.iduserLike._id) === String(thisuser)){
-                            $("td#"+idtblike).attr('data-typelikenumber', 1);
-                            $("td#"+idtblike).attr('data-likenumber', datalike.length);
-                            $("td#"+idtblike).html(datalike.length);
-                            abc = 1;
-                        }
-                    });
-                    if(abc != 1){
-                        $("td#"+idtblike).attr('data-typelikenumber', 0);
-                        $("td#"+idtblike).attr('data-likenumber', datalike.length);
-                        $("td#"+idtblike).html(datalike.length);
-                    }  
-                }
-            }
-        });
-    });
-    function updatelikeposts(data){
-        let numberlike = data.numberlikeposts;
-        $('span#numberlikeposts').html(numberlike);
-        
-        // if(data.userlike.iduserLike._id)
-        // 
-    };
     // EmojioneArea
     // see file before upload
     function readURL(input) {
@@ -229,5 +180,3 @@
         }
     }
     // upload file cmt
-
-    

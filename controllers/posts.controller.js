@@ -1,13 +1,16 @@
 var Posts = require('../models/posts.models');
+var Notification = require('../models/notification.models');
 var fs = require('fs');
 
 
 //
 module.exports.getPosts = async (req, res) => {
-  await Posts.find({}).populate('iduser','username avata').exec(function (err, posts) {
-    if (err) return handleError(err);
-    res.render('./admin/layoutadmin/posts',{postsall:posts});
-    // res.send(posts);
+  await Posts.find({}).populate('iduser','username avata').exec( async (err, posts) => {
+    if (err) throw err;
+    else{
+        await res.render('./admin/layoutadmin/posts',{postsall:posts});
+    }
+    // res.send(posts);./admin/layoutadmin/posts
   });
 };
 //
@@ -120,52 +123,52 @@ module.exports.edit = async (req, res) =>{
 // ajax
 // like posts
 module.exports.likeposts = async (req, res) => {
-    console.log(req.body);
-    if(req.body.action == 'like'){
-        await Posts.findByIdAndUpdate(req.body.id, {$addToSet:{
-            numberLike:{
-                iduserLike : req.signedCookies.cookieid,
-            }
-        }}, (err, data) => {
-            if(err) {
-                res.json({
-                    success: false,
-                    msg: "Failed to add author"
-                });
-            }else{
-                console.log(data);
-            };
-        });
-    };
-    if(req.body.action == 'dislike'){
-        await Posts.findByIdAndUpdate(req.body.id, {$pull:{
-            numberLike:{
-                iduserLike : req.signedCookies.cookieid,
-            }
-        }}, (err, data) => {
-            if(err) {
-                res.json({
-                    success: false,
-                    msg: "Failed to add author"
-                });
-            }else{
-                console.log(data);
-            };
-        });
-    }
-    await Posts.findOne({_id: req.body.id}).populate('numberLike.iduserLike','username').exec((err, data) => {
-        if(err) {
-            res.json({
-                success: false,
-                msg: "Failed to add author"
-            });
-        }else{
-            resData = {
-                numberlikeposts: data.numberLike.length,
-                userlike: data.numberLike
-            };
-            console.log(resData);
-            res.send(JSON.stringify(resData));
-        };
-    });
+    // if(req.body.action == 'like'){
+    //     await Posts.findByIdAndUpdate(req.body.id, {$addToSet:{
+    //         numberLike:{
+    //             iduserLike : req.signedCookies.cookieid,
+    //         }
+    //     }}, (err, data) => {
+    //         if(err) {
+    //             res.json({
+    //                 success: false,
+    //                 msg: "Failed to add author"
+    //             });
+    //         }else{
+    //             console.log('like' +data);
+    //         };
+    //     });
+    // };
+    // if(req.body.action == 'dislike'){
+    //     await Posts.findByIdAndUpdate(req.body.id, {$pull:{
+    //         numberLike:{
+    //             iduserLike : req.signedCookies.cookieid,
+    //         }
+    //     }}, (err, data) => {
+    //         if(err) {
+    //             res.json({
+    //                 success: false,
+    //                 msg: "Failed to add author"
+    //             });
+    //         }else{
+    //             console.log( 'dislike' +data);
+    //         };
+    //     });
+    // }
+    // await Posts.findOne({_id: req.body.id}).populate('numberLike.iduserLike','username').exec((err, data) => {
+    //     if(err) {
+    //         res.json({
+    //             success: false,
+    //             msg: "Failed to add author"
+    //         });
+    //     }else{
+    //         res.send(data);
+    //         // resData = {
+    //         //     numberlikeposts: data.numberLike.length,
+    //         //     userlike: data.numberLike
+    //         // };
+    //         // console.log(resData);
+    //         // res.send(JSON.stringify(resData));
+    //     };
+    // });
 };

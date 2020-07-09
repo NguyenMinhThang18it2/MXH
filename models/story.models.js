@@ -17,19 +17,7 @@ var StorysSchema = new mongoose.Schema({
             required: true
         }
     },
-    file: {
-        image: 
-        {
-            type:String,
-            required: true
-        },
-        video: 
-        {
-            type:String,
-            required: true
-        }
-    }
-    ,
+    file:[String],
     numberLike:[{
         iduserLike:{
             type:mongoose.Schema.Types.ObjectId, ref: 'User' 

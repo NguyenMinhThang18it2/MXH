@@ -4,7 +4,7 @@ var profileSchema = new mongoose.Schema({
     iduser: {
         type: mongoose.Schema.Types.ObjectId, ref: 'User' 
     },
-    profile:[{
+    profile:{
         gender:{
             type: String,
             require: true
@@ -21,8 +21,8 @@ var profileSchema = new mongoose.Schema({
             type: String,
             require: true
         } 
-    }],
-    education:[{
+    },
+    education:{
         typeeducation:{
             type:String,
             require: true
@@ -30,16 +30,8 @@ var profileSchema = new mongoose.Schema({
         school :{
             type: String,
             require: true
-        },
-        year :{
-            type: Number,
-            require: true
-        },
-        graduated:{
-            type: Boolean,
-            require: true
         }
-    }],
+    },
     placeslive:{
         type: String,
         require: true
@@ -51,6 +43,14 @@ var profileSchema = new mongoose.Schema({
     job:{
         type: String,
         require: true
+    },
+    createdAt:{
+        type: Date, 
+        default: Date.now
+    },
+    updatedAt:{
+        type: Date, 
+        default: Date.now
     }
 });
 

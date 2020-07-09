@@ -4,8 +4,7 @@ var Storys = require('../../models/story.models');
 
 //
 module.exports.getStory = async (req, res) => {
-    console.log("Vào rồi");
-  await Storys.find({}).populate('iduser','username').exec(function (err, storys) {
+  await Storys.find({}).populate('iduser','username avata').exec(function (err, storys) {
     if (err) return handleError(err);
     res.send(storys);
   });

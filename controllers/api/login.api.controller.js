@@ -1,6 +1,8 @@
+require('dotenv').config();
+
 var User = require('../../models/users.models');
 var passwordHash = require('password-hash');
-
+var jwt = require('jsonwebtoken');
 // module.exports.getlogin = function(req, res, next) {
 //     res.render('./admin/layoutadmin/login');
 //  };
@@ -21,10 +23,16 @@ module.exports.postlogin = function(req, res, next) {
         }
         else{
             if(passwordHash.verify(req.body.password, user.password)){
+              let userToken = {
+                id: user._id,
+                email: user.email
+              };
+              let token = jwt.sign(userToken, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
               res.json({
                 success: true,
                 msg: "Login is Success",
-                user: user
+                user: user,
+                token: token
               }); 
             }else{
               res.json({

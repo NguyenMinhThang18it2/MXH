@@ -1,5 +1,8 @@
 var User = require('../models/users.models');
 var passwordHash = require('password-hash');
+var Follow = require('../models/follow.models');
+var Friend = require('../models/friends.models');
+var Notification = require('../models/notification.models');
 
 module.exports.getUsers = (req, res, next) => {
     User.find({}, function(err, user){
@@ -19,15 +22,47 @@ module.exports.postUser = async (req, res) => {
         username: req.body.username,
         email: req.body.email,
         password: passwordHash.generate(req.body.password),
-        avata:'avata-male-default.jpg'
+        avata:'avata-male-default.jpg',
+        coverimage:'coverimg.jpg'
     });
-    newuser.save((err, user) => {
+    newuser.save( async (err, user) => {
         if(err) {
         res.json({
             success: false,
             msg: "Failed to add author"
         });
         } else {
+            // Follow
+            let newFollow = await new Follow({
+                iduser: user._id,
+                listFollowers:[],
+                listFollowing:[]
+            });
+            await newFollow.save(async (err, data) => {
+                if(err) throw err;
+                else {
+                    console.log('follow create oki');
+                }
+            });
+            // friend
+            let newFriend = await new Friend({
+                iduser: user._id,
+                listFriend:[]
+            });
+            await newFriend.save(async (err, data) => {
+                if(err) throw err;
+                else {
+                    console.log('listfriend create oki');
+                }
+            });
+            let newNotification = await new Notification({
+                iduser: user._id,
+                listnotification:[]
+            });
+            await newNotification.save( async (err, data) =>{
+                if(err) throw err;
+                console.log('notification create ok');
+            });
             res.redirect('tableuser');
         }
     });
@@ -36,7 +71,7 @@ module.exports.postUser = async (req, res) => {
 module.exports.delete = async (req, res) => {
     await User.findByIdAndDelete({_id: req.params.id}, function(err, user) {
         if (err) throw err;
-        else res.redirect('tableuser');
+        else res.redirect('/admin/tableuser');
     });
 };
 //

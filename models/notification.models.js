@@ -2,31 +2,53 @@ var mongoose = require('mongoose');
 
 var notificationSchema = mongoose.Schema({
     iduser:{
-        type: mongoose.Schema.type.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         require: true,
         ref: 'User'
     },
     listnotification:[{
-        id_Source:{
-            type: mongoose.Schema.type.ObjectId,
+        idPosts:{
+            type: mongoose.Schema.Types.ObjectId,
             require: true,
-            refPath: "onModel"
+            ref: "Posts"
         },
-        onModel:{
-            type: String,
-            required: true,
-            enum: ['Posts', 'Storys']
+        idStorys:{
+            type: mongoose.Schema.Types.ObjectId,
+            require: true,
+            ref: "Storys"
         },
-        iduserpost:{
-            type: mongoose.Schema.type.ObjectId,
+        idUserFollow:{
+            type: mongoose.Schema.Types.ObjectId,
+            require: true,
+            ref: "User"
+        },
+        idUserAddFriend:{
+            type: mongoose.Schema.Types.ObjectId,
+            require: true,
+            ref: "User"
+        },
+        iduserNotify:{
+            type: mongoose.Schema.Types.ObjectId,
             require: true,
             ref: 'User'
+        },
+        status:{
+            type: Boolean,
+            require: true
         },
         title:{
             type: String,
             require: true
+        },    
+        createdAt:{
+            type: Date, 
+            default: Date.now
         },
+        updatedAt:{
+            type: Date, 
+            default: Date.now
+        }
     }]
 });
-var Notification = mongoose.model('Friend', notificationSchema, 'notifications');
+var Notification = mongoose.model('Notification', notificationSchema, 'notifications');
 module.exports = Notification;

@@ -2,13 +2,19 @@ var mongoose = require('mongoose');
 
 var followSchema = mongoose.Schema({
     iduser:{
-        type: mongoose.Schema.type.ObjectId,
-        require: true,
-        ref: 'User'
+        type: mongoose.Schema.Types.ObjectId,
+        require: true
     },
-    listFollow:[{
-        iduser:{
-            type: mongoose.Schema.type.ObjectId,
+    listFollowers:[{
+        iduserFollowers:{
+            type: mongoose.Schema.Types.ObjectId,
+            require: true,
+            ref: 'User'
+        }
+    }],
+    listFollowing:[{
+        iduserFollowing:{
+            type: mongoose.Schema.Types.ObjectId,
             require: true,
             ref: 'User'
         }

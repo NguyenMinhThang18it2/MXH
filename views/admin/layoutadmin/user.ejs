@@ -160,6 +160,12 @@
                                             <button type="button" class="btn btn-warning" id="editbutton" data-toggle="modal" data-target="#exampleModaltrue">
                                                 <i class="far fa-edit"></i>
                                             </button>
+                                            <!-- follow -->
+                                            <a class="btn btn-success" id="followUser"><i class="far fa-grin-hearts"></i></i> F</a>
+                                            <a class="btn btn-danger" href="/admin/unfollow/<%= user._id %>"><i class="far fa-grin-hearts"></i></i> UF</a>
+                                            <!-- addfriend -->
+                                            <a class="btn btn-info" href="/admin/addfriend/<%= user._id %>"><i class="fas fa-user-plus"></i> A</a>
+                                            <a class="btn btn-danger" href="/admin/deletefriend/<%= user._id %>"><i class="fas fa-user-plus"></i> DA</a>
                                         </td>
                                     </tr>
                                     <% }) %>
@@ -181,14 +187,15 @@
         var username = $tr.find('td[data-username]').data('username');
         var email = $tr.find('td[data-email]').data('email');
         
-        
 
         $('h5.modal-title').html('Edit Admin Data: '+username);
         $('#editname').val(username);
         $('#editemail').val(email);
         
-
         $("form#formEdit").attr('action', window.location.href+'/update/'+iduser);
+    });
+    $("#followUser").click(function() {
+       alert("ádnlkasdm");   
     });
 </script>
 
