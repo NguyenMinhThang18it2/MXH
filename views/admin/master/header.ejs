@@ -114,30 +114,30 @@
                                             m = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)),
                                             s = Math.floor((t % (1000 * 60)) / 1000);
                                             if(w>0) return w + ' week ago ';
-                                            else if(d>0) return d + ' day ago';
-                                            else if(h>0) return h + ' hour ago';
-                                            else if(m>0) return m + ' minute ago';
+                                            else if(d>0) return d + 'd ago';
+                                            else if(h>0) return h + 'h ago';
+                                            else if(m>0) return m + 'm ago';
                                             else if(s>0) return 'just now';
                                         }%>
 
-                                        <%    if(typeof notification === "object"){ 
-                                                let notificationabc = notification.reverse();
-                                                let statusabc = ''; 
-                                                notificationabc.forEach(function(notify){
-                                                if(notify.status !== true){
-                                                    statusabc = 'background: #888888';
-                                                } 
-                                                let timecreated = notify.createdAt;
-                                                let diff = Math.abs(new Date() - new Date(timecreated));
-                                                let time = timer(diff);
+                                        <%    if(typeof notification !== "undefined"){ 
+                                               var notificationArr = notification.listnotification.reverse();
+                                               var styleNotification = "";
+                                               notificationArr.forEach((notify)=>{
+                                                   if(notify.status === false){
+                                                    styleNotification = "background: #A9A9A9";
+                                                   }
+                                                   let createdAt = notify.createdAt;
+                                                    let diff = Math.abs(new Date() - new Date(notify.createdAt));
+                                                    var timeline = timer(diff);
                                                 %>
-                                                <li style ="width: 100%;<%= statusabc %>;">
+                                                <li style ="width: 100%;<%= styleNotification %>;">
                                                     <a href="#">
                                                         <div class="notification-icon">
-                                                            <img src="../../../uploads/<%= notify.iduserNotify.avata %>" alt=""style="border-radius:100%;width:100%;height:100%;margin-top: -3px">
+                                                            <img src="../../../uploads/<%= notify.iduserNotify.avata %>" alt="" style="border-radius:100%;width:100%;height:100%;margin-top: -3px">
                                                         </div>
                                                         <div class="notification-content">
-                                                            <span class="notification-date"><%= time %></span>
+                                                            <span class="notification-date"><%= timeline %></span>
                                                             <h2><%= notify.iduserNotify.username %></h2>
                                                             <p><% if(notify.title === 'comment'){ %>
                                                                     Đã bình luận bài viết của <%= notify.idPosts.iduser.username %>
@@ -153,7 +153,19 @@
                                                     </a>
                                                 </li>
                                             <% }); %>
-                                        <%} %>
+                                        <%}else{%>
+                                            <li style ="width: 100%;">
+                                                <a href="#">
+                                                    <div class="notification-icon">
+                                                        
+                                                    </div>
+                                                    <div class="notification-content">
+                                                        <span class="notification-date">Rỗng</span>
+                                                        
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <%} %>
                                     </ul>
                                     <div class="notification-view">
                                         <a href="#">View All Notification</a>
@@ -163,7 +175,7 @@
                             <li class="nav-item">
                                 <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle">
                                     <i class="far fa-user-circle"></i>
-                                    <% if(typeof user == "undefined"){ %>
+                                    <% if(typeof user === "undefined"){ %>
                                         <span class="admin-name"></span>
                                         <span id="idthisuserlogin" hidden></span> 
                                     <% }else{%>

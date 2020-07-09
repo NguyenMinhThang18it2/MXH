@@ -14,7 +14,7 @@ module.exports.authentication = async (req, res, next) =>{
     }
     
 
-    res.locals.user = await user;
+    res.app.locals.user = await user;
     await Notification.findOne({ iduser: user._id})
         .populate('listnotification.iduserNotify', 'username avata')
         .populate('listnotification.idPosts', 'iduser')
@@ -27,10 +27,11 @@ module.exports.authentication = async (req, res, next) =>{
             }, async (err, dataNotify)=>{
                 if(err) throw err;
                 // res.send(data);
-                console.log(typeof data);
-                res.locals.notification = await dataNotify.listnotification;
+                // console.log(dataNotify);
+                res.app.locals.notification = await dataNotify;
             });
     });
-    console.log("ádhkasdsajdhsjd"+res.locals.notify);
+    
+    // console.log("ádhkasdsajdhsjd"+notification);
     next();
 };
