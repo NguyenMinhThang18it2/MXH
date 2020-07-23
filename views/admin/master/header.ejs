@@ -38,6 +38,59 @@
                 <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
                     <div class="header-right-info">
                         <ul class="nav navbar-nav mai-top-nav header-right-menu">
+                            <% 
+                                function timer(t) {
+                                    w = Math.floor(t / (1000 * 60 * 60 * 24 * 7)),
+                                    d = Math.floor(t / (1000 * 60 * 60 * 24)),
+                                    h = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                                    m = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)),
+                                    s = Math.floor((t % (1000 * 60)) / 1000);
+                                    if(w>0) return w + ' week ago ';
+                                    else if(d>0) return d + 'd ago';
+                                    else if(h>0) return h + 'h ago';
+                                    else if(m>0) return m + 'm ago';
+                                    else if(s>0) return 'just now';
+                                }%>
+                            <li class="nav-item dropdown">
+                                <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle"><i class="fas fa-user-plus"></i><span class="indicator-ms"></span></a>
+                                <div role="menu" class="author-message-top dropdown-menu animated flipInX">
+                                    <div class="notification-single-top">
+                                        <h1>New Firend</h1>
+                                    </div>
+                                    <ul class="notification-menu">
+                                        <%    if(typeof notification !== "undefined"){ 
+                                            let notifyArr = notification.listnotification.reverse();
+                                            let styleNotification = "";
+                                            notifyArr.forEach((notify)=>{
+                                              if(notify.title === "addfriend"){
+                                                if(notify.status === false){
+                                                 styleNotification = "background: #A9A9A9";
+                                                }
+                                                let createdAt = notify.createdAt;
+                                                 let diff = Math.abs(new Date() - new Date(notify.createdAt));
+                                                 let timeline = timer(diff);
+                                             %>
+                                       <li style ="width: 100%;border-bottom: 1px solid #888888;">
+                                            <a href="#">
+                                                <div class="notification-icon">
+                                                    <img src="../../../uploads/<%= notify.iduserNotify.avata %>" alt="" style="border-radius:100%;width:100%;height:100%;margin-top: -3px">
+                                                </div>
+                                                <div class="notification-content">
+                                                    <div class="notification-date" style="margin-right: 5px;">
+                                                        <button type="button" class="btn btn-success" onclick="replyfriend('<%= notify.iduserNotify._id %>')"><i class="fas fa-check"></i></button>
+                                                        <button type="button" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                                                    </div>
+                                                    <a style="margin-top:12%; max-width: 70%;"><b><%= notify.iduserNotify.username %></b></a>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <%}});}%>
+                                    </ul>
+                                    <div class="notification-view">
+                                        <a href="#">View All Messages</a>
+                                    </div>
+                                </div>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle"><i class="far fa-comment"></i><span class="indicator-ms"></span></a>
                                 <div role="menu" class="author-message-top dropdown-menu animated flipInX">
@@ -106,32 +159,19 @@
                                         <h1>Notifications</h1>
                                     </div>
                                     <ul class="notification-menu" id="shownotify">
-                                        <% 
-                                        function timer(t) {
-                                            w = Math.floor(t / (1000 * 60 * 60 * 24 * 7)),
-                                            d = Math.floor(t / (1000 * 60 * 60 * 24)),
-                                            h = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                                            m = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)),
-                                            s = Math.floor((t % (1000 * 60)) / 1000);
-                                            if(w>0) return w + ' week ago ';
-                                            else if(d>0) return d + 'd ago';
-                                            else if(h>0) return h + 'h ago';
-                                            else if(m>0) return m + 'm ago';
-                                            else if(s>0) return 'just now';
-                                        }%>
-
                                         <%    if(typeof notification !== "undefined"){ 
-                                               var notificationArr = notification.listnotification.reverse();
-                                               var styleNotification = "";
+                                               let notificationArr = notification.listnotification;
+                                               let styleNotification = "";
                                                notificationArr.forEach((notify)=>{
+                                                 if(notify.title !== "addfriend"){
                                                    if(notify.status === false){
                                                     styleNotification = "background: #A9A9A9";
                                                    }
                                                    let createdAt = notify.createdAt;
                                                     let diff = Math.abs(new Date() - new Date(notify.createdAt));
-                                                    var timeline = timer(diff);
+                                                    let timeline = timer(diff);
                                                 %>
-                                                <li style ="width: 100%;<%= styleNotification %>;">
+                                                <li style ="width: 100%;<%= styleNotification %>;border-bottom: 1px solid #424242;">
                                                     <a href="#">
                                                         <div class="notification-icon">
                                                             <img src="../../../uploads/<%= notify.iduserNotify.avata %>" alt="" style="border-radius:100%;width:100%;height:100%;margin-top: -3px">
@@ -148,11 +188,14 @@
                                                                 <% if(notify.title === 'newposts'){ %>
                                                                     Đã đăng một bài viết mới
                                                                 <% } %>
+                                                                <% if(notify.title === 'follow'){ %>
+                                                                    Đã bắt đầu theo dõi bạn bạn
+                                                                <% } %>
                                                             </p>
                                                         </div>
                                                     </a>
                                                 </li>
-                                            <% }); %>
+                                            <% }}); %>
                                         <%}else{%>
                                             <li style ="width: 100%;">
                                                 <a href="#">

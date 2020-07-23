@@ -55,6 +55,7 @@ module.exports.postUser = async (req, res) => {
                     console.log('listfriend create oki');
                 }
             });
+            // notification
             let newNotification = await new Notification({
                 iduser: user._id,
                 listnotification:[]

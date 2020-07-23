@@ -8,6 +8,7 @@ var storage = multer.diskStorage({
       cb(null, './public/uploads/');
     },
     filename: function (req, file, cb) {
+      console.log(file);
       let parts = file.originalname.split('.');
       let format = parts[parts.length - 2];
       if(format == "background"){
@@ -23,8 +24,9 @@ var upload = multer({ storage: storage });
 
 // get posts
 router.get('/posts', controller.getPosts);
+router.get('/posts/:id', controller.getPostsUser);
 // post posts
-router.post('/posts', upload.single('image'), controller.postPosts);
+router.post('/posts', upload.array('image', 20), controller.postPosts);
 //
 router.post('/postbackground' , controller.postBackground);
 //Delete posts

@@ -28,7 +28,10 @@ var apiloginRouter = require('./routes/api/login.api');
 var apipostsRouter = require('./routes/api/posts.api');
 var apistoryRouter = require('./routes/api/story.api');
 var apithemeRouter = require('./routes/api/themestatus.api');
-var profileRouter  = require('./routes/api/profile.api');
+var apiprofileRouter  = require('./routes/api/profile.api');
+var apinotificationRouter = require('./routes/api/notification.api'); 
+var apifollowerRouter = require('./routes/api/follower.api');
+var apifriendRouter = require('./routes/api/friends.api')
 
 var app = express();
 var io = require('./socket/socket');
@@ -68,20 +71,13 @@ app.use('/api', apiloginRouter);
 app.use('/api', authJWT.authenticationJWT, apipostsRouter);
 app.use('/api', authJWT.authenticationJWT, apistoryRouter);
 app.use('/api', authJWT.authenticationJWT, apithemeRouter);
-app.use('/api', authJWT.authenticationJWT, profileRouter);
+app.use('/api', authJWT.authenticationJWT, apiprofileRouter);
+app.use('/api', authJWT.authenticationJWT, apinotificationRouter);apifollowerRouter
+app.use('/api', authJWT.authenticationJWT, apifollowerRouter);
+app.use('/api', authJWT.authenticationJWT, apifriendRouter);
 
 app.use('/test', authJWT.authenticationJWT, (req, res) =>{
-  console.log("con kẹt"+ req.token);
-  
-  jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, data)=>{
-    if(err) res.send(err);
-    else{
-      res.json({
-        msg:' helllo cai dầu buồi',
-        data: data
-      });  
-    }
-  });
+    res.render('./admin/master/test');
 });
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

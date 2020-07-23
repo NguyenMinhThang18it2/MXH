@@ -14,21 +14,36 @@ module.exports.getPosts = async (req, res) => {
   });
 };
 //
+module.exports.tetsPostFIle = async (req, res) => {
+    let arrFile = [];
+    let parts = req.files[0].filename.split('.');
+    let format = parts[parts.length - 1];
+    req.files.forEach(element => {
+        arrFile.push(element.filename);
+    });
+    console.log(arrFile);
+    res.send("ok"+format);
+};
+//
 module.exports.postPost = async (req, res) => {
-    let parts = req.file.filename.split('.');
+    let arrFileImg = []; // mảng hình ảnh
+    req.files.forEach(element => {
+        arrFileImg.push(element.filename);
+    });
+    let parts = req.files[0].filename.split('.');
     let format = parts[parts.length - 1];
     let formatBackground = parts[parts.length-2];
     if(formatBackground != "background" && (format == "jpg" || format == "png")){
-        var fileimage = req.file.filename;
+        var fileimage = arrFileImg;
         var filevideo = " ";
         var background = " ";
     }
     else if(format == "mp4" && formatBackground != "background"){
-        var filevideo = req.file.filename;
-        var fileimage = " ";
+        var filevideo = req.files[0].filename; // 1 video
+        var fileimage = [];
         var background = " ";
     }else {
-        var fileimage = " ";
+        var fileimage = [];
         var filevideo = " ";
         var background = req.file.filename;
     }

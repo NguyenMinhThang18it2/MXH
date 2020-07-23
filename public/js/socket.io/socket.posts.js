@@ -42,10 +42,10 @@ $(function () {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
-          });
-          await setTimeout( async () =>{ 
+          }).then(async (response)=>{
+            console.log(response);
             await socket.emit('id getcommentposts', {id:data.id});
-          }, 1000);
+          });
           $( "#file-input" ).val("");
       }else{
         await socket.emit('id getcommentposts', {id:data.id});
@@ -66,7 +66,7 @@ $(function () {
       //
         let srcimg = "";
         if(data.datacmt.file.image != " "){
-          srcimg = '<img id="imgtextcmt" src="../../../uploads/'+data.datacmt.file.image+'" alt="">';
+          srcimg = '<img id="imgtextcmt" src="../../../uploads/'+data.datacmt.file.imageComment+'" alt="">';
         }else{
           srcimg = "<div></div>";
         }
@@ -135,7 +135,7 @@ $(function () {
           //
             let srcimg = "";
             if(datascmt[i].file.image != " "){
-              srcimg = '<img id="imgtextcmt" src="../../../uploads/'+datascmt[i].file.image+'" alt="">';
+              srcimg = '<img id="imgtextcmt" src="../../../uploads/'+datascmt[i].file.imageComment+'" alt="">';
             }else{
               srcimg = "<div></div>";
             }
@@ -237,11 +237,12 @@ $(function () {
     // notification
     socket.on('send notification to client', async (data)=>{
       console.log(data);
-      let searchThis = document.getElementById('mCSB_2_container').innerHTML;
-      await $('div#mCSB_2_container').html("");
+      let searchThis = document.getElementById('mCSB_3_container').innerHTML;
+      await $('div#mCSB_3_container').html("");
       let iduser = document.getElementById('idthisuserlogin').innerHTML;
 
       let docNoify = "";
+      // comment
       if(data.action === 'comment') {
        docNoify = 'Đã bình luận bài viết của <b>'+data.userPosts+'</b>';
        await data.sendNotify.forEach( async (notify) =>{
@@ -261,13 +262,13 @@ $(function () {
             htmlNotify +=  '  </a>';
             htmlNotify += '</li>';
             console.log(htmlNotify);
-            await $('div#mCSB_2_container').append(htmlNotify);
-            await $('div#mCSB_2_container').append(searchThis);
+            await $('div#mCSB_3_container').append(htmlNotify);
+            await $('div#mCSB_3_container').append(searchThis);
           }
         });
 
-      }else if(data.action === 'likeposts'){
-       docNoify = 'Đã like bài viết của bạn';
+      }else if(data.action === 'likeposts'){ // like       
+        docNoify = 'Đã like bài viết của bạn';
         if(String(data.sendNotify) === iduser){
             let htmlNotify = '';
             htmlNotify += '<li style="width: 100%; background: #888888";>'
@@ -284,17 +285,64 @@ $(function () {
             htmlNotify +=  '  </a>';
             htmlNotify += '</li>';
             console.log(htmlNotify);
-            await $('div#mCSB_2_container').append(htmlNotify);
-            await $('div#mCSB_2_container').append(searchThis);
+            await $('div#mCSB_3_container').append(htmlNotify);
+            await $('div#mCSB_3_container').append(searchThis);
           }
-      }else if(data.action === 'newposts'){
+      }else if(data.action === 'newposts'){ // new post
         docNoify = 'Đã đăng bài viết mới';
       }
+      else if(data.action === 'follow'){
+        console.log(data);
+        
+        docNoify = 'Đã bắt đầu theo dõi bạn';
+        if(String(data.sendNotify) === iduser){
+          let htmlNotify = '';
+          htmlNotify += '<li style="width: 100%; background: #888888";>'
+          htmlNotify +=    '<a href="#">';
+          htmlNotify +=       ' <div class="notification-icon">';
+          htmlNotify +=         '   <img src="../../../uploads/'+data.userFollow.avata+'" alt=""style="border-radius:100%;width:100%;height:100%;margin-top: -3px">';
+          htmlNotify +=        '</div>';
+          htmlNotify +=        '<div class="notification-content">';
+          htmlNotify +=           ' <span class="notification-date">just now</span>';
+          htmlNotify +=               ' <h2>'+data.userFollow.username+'</h2>  ';
+          htmlNotify +=              '  <h2></h2>  ';
+          htmlNotify +=          '  <p>'+docNoify+'</b></p>';
+          htmlNotify +=     '   </div>';
+          htmlNotify +=  '  </a>';
+          htmlNotify += '</li>';
+          console.log(htmlNotify);
+          await $('div#mCSB_3_container').append(htmlNotify);
+          await $('div#mCSB_3_container').append(searchThis);
+        }
+      }else if(data.action === 'addfriend'){
+        console.log(data);
+        await $('div#mCSB_3_container').html("");
+        if(String(data.sendNotify) === iduser){
+          let ArrNotification = data.userNotification.listnotification.reverse();
+          ArrNotification.forEach(async (notify)=>{
+            let htmlNotify = '';
+            htmlNotify += '<li style="width: 100%; background: #888888";>'
+            htmlNotify +=    '<a href="#">';
+            htmlNotify +=       ' <div class="notification-icon">';
+            htmlNotify +=         '   <img src="../../../uploads/'+data.userFollow.avata+'" alt=""style="border-radius:100%;width:100%;height:100%;margin-top: -3px">';
+            htmlNotify +=        '</div>';
+            htmlNotify +=        '<div class="notification-content">';
+            htmlNotify +=           ' <span class="notification-date">just now</span>';
+            htmlNotify +=               ' <h2>'+data.userFollow.username+'</h2>  ';
+            htmlNotify +=              '  <h2></h2>  ';
+            htmlNotify +=          '  <p>'+docNoify+'</b></p>';
+            htmlNotify +=     '   </div>';
+            htmlNotify +=  '  </a>';
+            htmlNotify += '</li>';
+            console.log(htmlNotify);
+            await $('div#mCSB_1_container').append(htmlNotify);
+          });
+        }
+      }
+    });
+    socket.on('add friend success', async (data)=>{
+      alert(data);
     });
     // end notification 
     //FollowUser
-    $('#followUser').on('click', async ()=>{
-      console.log("vãi nồi");
-      
-    });
 });

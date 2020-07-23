@@ -23,11 +23,11 @@ var profileSchema = new mongoose.Schema({
         } 
     },
     education:{
-        typeeducation:{
+        studied_at:{
             type:String,
             require: true
         },
-        school :{
+        studies_at :{
             type: String,
             require: true
         }

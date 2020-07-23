@@ -55,7 +55,7 @@
                         </div>
                         <div class="form-group">
                         <label for="image">Images</label>
-                        <input type="file" class="form-control" id="image" name="image">
+                        <input type="file" class="form-control" id="image" name="image" multiple>
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -263,11 +263,13 @@
                                         
                                         <td data-username="<%= posts.iduser.username %>" data-postsid="<%= posts._id %>" data-avatauser="<%= posts.iduser.avata %>"><%= posts.iduser.username %></td>
                                         <td data-document="<%= posts.document %>"><%= posts.document %></td>
-                                        <% if(posts.file.image != " "){ %>
-                                        <td  data-image="<%= posts.file.image %>" id="checkposts" data-toggle="modal" data-target="#exampleModalposts">
-                                            <img  src="../../../uploads/<%= posts.file.image %>" alt="" height="100dp" width="100dp">
+                                        <% if(posts.file.image.length > 0){ %>
+                                        <td  data-image="<%= posts.file.image[0] %>" id="checkposts" data-toggle="modal" data-target="#exampleModalposts">
+                                            <% for(i=0;i < posts.file.image.length ;i++){ %>
+                                            <img  src="../../../uploads/<%= posts.file.image[i] %>" alt="" height="100dp" width="100dp">
+                                            <%}%>
                                         </td>    
-                                        <% }else if(posts.file.video != " "){ %>
+                                        <%}else if(posts.file.video != " "){ %>
                                         <td data-video="<%= posts.file.video %>" id="checkposts" data-toggle="modal" data-target="#exampleModalposts" style="padding: 10%;">
                                             <video id="playvideotable"  width="320" height="240" controls>
                                                 <source  src="../../../uploads/<%= posts.file.video %>" type="video/mp4">

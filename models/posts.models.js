@@ -15,11 +15,8 @@ var PostsSchema = new mongoose.Schema({
         required: true
     },
     file: {
-        image: 
-        {
-            type:String,
-            required: true
-        },
+        image:[String]
+        ,
         video: 
         {
             type:String,

@@ -146,29 +146,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                   <% useraa.forEach(function(user){  %>
+                                   <% 
+                                        
+                                        useraa.forEach(function(users){
+                                        if(users.username !== user.username){  %>
                                     <tr>  
                                         <!-- <input type="hidden" id="iduser" value="<%= user._id %>"> -->
                                         <td></td>
-                                        <td data-username="<%= user.username %>"><%= user.username %></td>
-                                        <td data-email="<%= user.email %>"><%= user.email %></td>
-                                        <td  data-password="<%= user.password %>">
-                                            <img src="../../../uploads/<%= user.avata %>" width="60px" alt="">
+                                        <td data-username="<%= users.username %>"><%= users.username %></td>
+                                        <td data-email="<%= users.email %>"><%= users.email %></td>
+                                        <td  data-password="<%= users.password %>">
+                                            <img src="../../../uploads/<%= users.avata %>" width="60px" alt="">
                                         </td>
-                                        <td class="datatable-ct" data-iduser="<%= user._id %>">
-                                            <a class="btn btn-danger" href="/admin/tableuser/delete/<%= user._id %>"><i class="far fa-trash-alt"></i></a>
+                                        <td class="datatable-ct" data-iduser="<%= users._id %>">
+                                            <a class="btn btn-danger" href="/admin/tableuser/delete/<%= users._id %>"><i class="far fa-trash-alt"></i></a>
                                             <button type="button" class="btn btn-warning" id="editbutton" data-toggle="modal" data-target="#exampleModaltrue">
                                                 <i class="far fa-edit"></i>
                                             </button>
                                             <!-- follow -->
-                                            <a class="btn btn-success" id="followUser"><i class="far fa-grin-hearts"></i></i> F</a>
-                                            <a class="btn btn-danger" href="/admin/unfollow/<%= user._id %>"><i class="far fa-grin-hearts"></i></i> UF</a>
+                                            <a class="btn btn-success" onclick="followUser('<%= users._id %>')"><i class="far fa-grin-hearts"></i></i> F</a>
+                                            <a class="btn btn-danger" href="/admin/unfollow/<%= users._id %>"><i class="far fa-grin-hearts"></i></i> UF</a>
                                             <!-- addfriend -->
-                                            <a class="btn btn-info" href="/admin/addfriend/<%= user._id %>"><i class="fas fa-user-plus"></i> A</a>
-                                            <a class="btn btn-danger" href="/admin/deletefriend/<%= user._id %>"><i class="fas fa-user-plus"></i> DA</a>
+                                            <a class="btn btn-info" onclick="addfriend('<%= users._id %>')"><i class="fas fa-user-plus"></i> A</a>
+                                            <a class="btn btn-danger" href="/admin/deletefriend/<%= users._id %>"><i class="fas fa-user-plus"></i> DA</a>
                                         </td>
                                     </tr>
-                                    <% }) %>
+                                    <% }}) %>
                                 </tbody>
                             </table>
                         </div>
@@ -187,16 +190,35 @@
         var username = $tr.find('td[data-username]').data('username');
         var email = $tr.find('td[data-email]').data('email');
         
-
+        
         $('h5.modal-title').html('Edit Admin Data: '+username);
         $('#editname').val(username);
         $('#editemail').val(email);
         
         $("form#formEdit").attr('action', window.location.href+'/update/'+iduser);
     });
-    $("#followUser").click(function() {
-       alert("ádnlkasdm");   
-    });
+    function followUser(id){
+        let iduser = document.getElementById('idthisuserlogin').innerHTML;
+        socket.emit('followUser', {
+            iduserLogin: iduser,
+            FollowUser: id
+        });
+    }
+    function addfriend(idaddfriend){
+        let iduser = document.getElementById('idthisuserlogin').innerHTML;
+        socket.emit('add notication friend', {
+            iduserLogin: iduser,
+            friend: idaddfriend
+        });
+    }
+    function replyfriend(idreplyfriend){
+        alert(idreplyfriend);
+        let iduser = document.getElementById('idthisuserlogin').innerHTML;
+        socket.emit('add new friend', {
+            iduserLogin: iduser,
+            replyfriend: idreplyfriend
+        });
+    }
 </script>
 
 <script src="../../../js/counterup/jquery.counterup.min.js"></script>

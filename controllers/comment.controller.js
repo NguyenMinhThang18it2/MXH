@@ -9,26 +9,26 @@ module.exports.getComment = async (req, res) => {
 };
 //
 module.exports.postImgComment = async (req, res) => {
+    var fileimage ="";
     console.log(req.params.id);
     let parts = req.file.filename.split('.');
     let format = parts[parts.length - 1];
-    if(format == "jpg" || format == "png"){
-        var fileimage = req.file.filename;
-        var filevideo = " ";
+    console.log("hahahaha  "+format);
+    if(format === "jpg" || format === "png"){
+        fileimage = req.file.filename;
     }
-    else if(format == "mp4"){
-        var filevideo = req.file.filename;
-        var fileimage = " ";
-    }
-    console.log(fileimage+filevideo);
-    await Comment.findByIdAndUpdate(req.params.id, {$set:{'file.image' : fileimage}}, (err, data) => {
+    console.log("why ? "+fileimage);
+    await Comment.findByIdAndUpdate(req.params.id, {$set:{'file.imageComment' : fileimage}}, (err, data) => {
         if(err) {
             res.json({
                 success: false,
                 msg: "Failed to add author"
             });
         }else{
-            console.log(data);
+            res.json({
+                success: true,
+                msg: "Success!"
+            })
         };
     });
 };

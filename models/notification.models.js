@@ -17,16 +17,6 @@ var notificationSchema = mongoose.Schema({
             require: true,
             ref: "Storys"
         },
-        idUserFollow:{
-            type: mongoose.Schema.Types.ObjectId,
-            require: true,
-            ref: "User"
-        },
-        idUserAddFriend:{
-            type: mongoose.Schema.Types.ObjectId,
-            require: true,
-            ref: "User"
-        },
         iduserNotify:{
             type: mongoose.Schema.Types.ObjectId,
             require: true,

@@ -1,10 +1,15 @@
 var Profile = require('../../models/profile.models');
 
 module.exports.getProfile = async (req, res)=>{
-    await Profile.findOne({_id: req.params.id}, async (err, data)=>{
+    await Profile.findOne({iduser: req.params.id}).populate('iduser').exec( async (err, data)=>{
         if(err) throw err;
-        else{
+        else if(data !== null){
             res.send(data);
+        }else{
+            res.json({
+                success: false,
+                msg: "chưa có profile"
+            });
         }
     });
 };
@@ -19,8 +24,8 @@ module.exports.postsProfile = async (req, res)=>{
             nickname: req.body.nickname
         },
         education:{
-            typeeducation: req.body.typeeducation,
-            school: req.body.school
+            studies_at: req.body.studies_at,
+            studied_at: req.body.studied_at
         },
         placeslive: req.body.placeslive,
         from: req.body.from,

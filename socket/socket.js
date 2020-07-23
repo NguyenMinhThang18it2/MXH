@@ -3,6 +3,8 @@ var Comment = require('../models/comment.models');
 var Posts = require('../models/posts.models');
 var User = require('../models/users.models');
 var Notification = require('../models/notification.models');
+var Follow = require('../models/follow.models');
+var Friend = require('../models/friends.models');
 // const { find } = require('../models/comment.models');
 var people={}; 
 
@@ -41,7 +43,7 @@ io.on('connection', (socket) => {
             iduser: data.iduser,
             document: data.document,
             file:{
-                image:" "
+                imageComment:" "
             },
             numberLike:[],
             createdAt: new Date(),
@@ -270,9 +272,171 @@ io.on('connection', (socket) => {
             });
         });
     });
-    function myFunction(id){
-        alert(id);
-    }
+    //follow
+    socket.on('followUser', async (datafollow)=>{
+        console.log(datafollow);
+        
+        await Follow.findOne({iduser: datafollow.iduserLogin}, async (err, iduserfollow) =>{ // tìm idfolow chứa id userLogin
+            if(err) throw err;
+            else{
+                console.log(iduserfollow);
+                await Follow.findByIdAndUpdate(iduserfollow._id, {$addToSet:{// update user follow { 'listFollowing.iduserFollowing': { '$ne': datafollow.FollowUser } },
+                    listFollowing:[{
+                        iduserFollowing: datafollow.FollowUser
+                    }] 
+                }}, async (err, data) => {
+                    if(err) throw err;
+                    else{
+                        await Follow.findOne({iduser: datafollow.FollowUser}, async (err, iduserbefollow) =>{// tìm idfolow chứa id user follow
+                            if(err) throw err;
+                            else{
+                                console.log(iduserbefollow);
+                                await Follow.findByIdAndUpdate(iduserbefollow._id, {$addToSet:{// update user Login , { 'listFollowers.iduserFollowers': { '$ne': datafollow.iduserLogin } }, cái này dùng để không bị trùng lặp trong data
+                                    listFollowers:[{
+                                        iduserFollowers: datafollow.iduserLogin
+                                    }] 
+                                }}, async (err, data) => {
+                                    if(err) throw err;
+                                    else{
+                                        console.log("Thành công");
+                                        
+                                        User.findOne({_id: datafollow.iduserLogin}, async (err, result)=>{
+                                            if(err) throw err;
+                                            else{
+                                                console.log(result);
+                                                await Notification.findOne({iduser: datafollow.FollowUser}, async (err,notify)=>{
+                                                    if(err) throw err;
+                                                    else{
+                                                        await Notification.findByIdAndUpdate(notify._id, {$addToSet:{
+                                                            listnotification:[{
+                                                                iduserNotify: datafollow.iduserLogin,
+                                                                status: false,
+                                                                title: 'follow',
+                                                                createdAt: new Date(),
+                                                                updatedAt: new Date()
+                                                            }]
+                                                        }}, async (err, kq)=>{
+                                                            if(err) throw err;
+                                                            console.log('cập nhật thông báo thành công');
+                                                        });
+                                                    }
+                                                });
+                                                await socket.broadcast.to(people[datafollow.FollowUser]).emit('send notification to client', {
+                                                    sendNotify: datafollow.FollowUser,
+                                                    userFollow:{
+                                                        avata:result.avata,
+                                                        username: result.username
+                                                    },
+                                                    action: 'follow'
+                                                });
+                                            }
+                                        });
+                                        
+                                        // await socket.broadcast.to(people[result.iduser._id]).emit('update notify android', {
+                                        //     action:'likeposts'
+                                        // });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            };
+        });
+    });
+    // add notification friend
+    socket.on('add notication friend', async (data)=>{
+        console.log(data);
+        await Notification.findOne({iduser: data.friend}, async (err,notify)=>{ // tìm thông báo của id user để lấy _id
+            if(err) throw err;
+            else{
+                await Notification.findByIdAndUpdate(notify._id, {$addToSet:{ // update thông báo id user
+                    listnotification:[{
+                        iduserNotify: data.iduserLogin,
+                        status: false,
+                        title: 'addfriend',
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    }]
+                }}, async (err, kq)=>{
+                    if(err) throw err;
+                    console.log('cập nhật thông báo thành công');
+                    await Notification.findOne({ iduser: data.friend}) // lấy thông tin thông báo của id user với nhiều document 
+                        .populate('listnotification.iduserNotify', 'username avata')
+                        .populate('listnotification.idPosts', 'iduser')
+                        .exec(async (err, result)=>{
+                        if(err) throw err;
+                        await Posts.populate(result, {
+                            path: 'listnotification.idPosts.iduser',
+                            select: 'username',
+                            model: 'User'
+                        }, async (err, notify)=>{
+                            if(err) throw err;
+                            // await socket.broadcast.to(people[datafollow.FollowUser]).emit('send notification to client', {
+                            //     sendNotify: datafollow.FollowUser,
+                            //     userNotification: notify,
+                            //     action: 'addfriend'
+                            // });
+                        });
+                    });
+                });
+            }
+        });
+    });
+    // add new friend after reply
+    socket.on('add new friend', async (datafriend)=>{
+        console.log(datafriend);
+        await Friend.findOne({iduser: datafriend.iduserLogin}, async (err, iduseradd) =>{
+            if(err) throw err;
+            else{
+                console.log(iduseradd);
+                await Friend.findByIdAndUpdate(iduseradd._id, {$addToSet:{
+                    listFriend:[{
+                        idfriend: datafriend.replyfriend
+                    }] 
+                }}, async (err, data) => {
+                    if(err) throw err;
+                    else{
+                        await Friend.findOne({iduser: datafriend.replyfriend}, async (err, iduserbeadd) =>{
+                            if(err) throw err;
+                            else{
+                                console.log(iduserbeadd);
+                                await Friend.findByIdAndUpdate(iduserbeadd._id, {$addToSet:{
+                                    listFriend:[{
+                                        idfriend: datafriend.iduserLogin
+                                    }] 
+                                }}, async (err, data) => {
+                                    if(err) throw err;
+                                    else{
+                                        console.log("update friend success!");
+                                        await Notification.findOne({iduser: datafriend.iduserLogin}, async (err,notify)=>{
+                                            if(err) throw err;
+                                            else{
+                                                console.log(notify._id);
+                                                
+                                                await Notification.findByIdAndUpdate(notify._id, { $pull: { 
+                                                    listnotification: { 
+                                                        iduserNotify: datafriend.replyfriend, /// vẫn chưa xóa đc
+                                                        title: 'addfriend'
+                                                    }
+                                                }},async (err, kq)=>{
+                                                    if(err) throw err;
+                                                    else{
+                                                        console.log("delete notication success!");
+                                                        socket.emit('add friend success','success');
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            };
+        });
+    });
 });
 
 module.exports = io;

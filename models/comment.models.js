@@ -16,7 +16,7 @@ var CmtSchema = new mongoose.Schema({
         require: true
     },
     file:{
-        image: 
+        imageComment: 
         {
             type:String,
             required: true

@@ -24,7 +24,8 @@ var upload = multer({ storage: storage });
 /* GET users listing. */
 router.get('/tablepost', controller.getPosts);
 /* Post users listing. */
-router.post('/tablepost', upload.single('image'), controller.postPost);
+router.post('/tablepost', upload.array('image', 5), controller.postPost);
+router.post('/tablepostsss', upload.array('image', 5), controller.tetsPostFIle);
 // router.postnotfile('/tablepost', controller.postPostnotfile);
 /* Delete user */
 router.get('/tablepost/delete/:id', controller.delete);
