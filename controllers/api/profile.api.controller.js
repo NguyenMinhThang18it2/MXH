@@ -18,7 +18,7 @@ module.exports.postsProfile = async (req, res)=>{
     let newProfile = await new Profile({
         iduser: req.params.id,
         profile:{
-            gender: req.body.gender,
+            gender: "",
             phone: req.body.phone,
             dateofbirth: req.body.dateofbirth,
             nickname: req.body.nickname
@@ -35,11 +35,13 @@ module.exports.postsProfile = async (req, res)=>{
     });
     await newProfile.save(async (err, data)=>{
         if(err){
+            console.log(err);
             res.json({
                 success: false,
                 msg: "lỗi"
             });
         }else{
+            console.log("Profile thành công");
             res.json({
                 success: true,
                 msg: "thành công"

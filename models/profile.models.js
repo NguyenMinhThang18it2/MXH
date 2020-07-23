@@ -14,7 +14,7 @@ var profileSchema = new mongoose.Schema({
             require: true
         },
         dateofbirth:{
-            type: Date,
+            type: String,
             require: true
         },
         nickname:{
@@ -38,7 +38,7 @@ var profileSchema = new mongoose.Schema({
     },
     from:{
         type:String,
-        required: true
+        require: true
     },
     job:{
         type: String,

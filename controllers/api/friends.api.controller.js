@@ -9,7 +9,7 @@ module.exports.getFriends = async (req, res) =>{
                 msg: "Not friend"
             });
         }else{
-            res.send(data);
+            res.send(data.listFriend);
         }
     });
 };
