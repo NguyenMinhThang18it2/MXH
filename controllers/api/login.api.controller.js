@@ -27,7 +27,7 @@ module.exports.postlogin = function(req, res, next) {
                 id: user._id,
                 email: user.email
               };
-              let token = jwt.sign(userToken, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
+              let token = jwt.sign(userToken, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30d'});
               res.json({
                 success: true,
                 msg: "Login is Success",
@@ -44,6 +44,7 @@ module.exports.postlogin = function(req, res, next) {
   });
 
 };
+//
 module.exports.postRegister = async function(req, res){
   let newuser = await new User({
       username: req.body.username,
@@ -64,4 +65,4 @@ module.exports.postRegister = async function(req, res){
           console.log("Thành công");
       }
   });
-};
+}

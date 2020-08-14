@@ -1,4 +1,6 @@
 var Profile = require('../../models/profile.models');
+var User = require('../../models/users.models');
+
 
 module.exports.getProfile = async (req, res)=>{
     await Profile.findOne({iduser: req.params.id}).populate('iduser').exec( async (err, data)=>{
@@ -45,6 +47,65 @@ module.exports.postsProfile = async (req, res)=>{
             res.json({
                 success: true,
                 msg: "thành công"
+            });
+        }
+    });
+};
+//
+module.exports.postAvata = async (req, res)=>{
+    console.log(req.file.filename);
+    await User.findByIdAndUpdate(req.params.id, {$set:{'avata' : req.file.filename}}, async (err, data)=>{
+        if(err){
+            console.log(err);
+            res.json({
+                success: false,
+                msg: "lỗi"
+            });
+        }else{
+            console.log("Profile thành công");
+            res.json({
+                success: true,
+                msg: "thành công",
+                data: req.file.filename
+            });
+        }
+    });
+};
+//
+module.exports.postCoverImg = async (req, res)=>{
+    console.log(req.file.filename);
+    await User.findByIdAndUpdate(req.params.id, {$set:{'coverimage' : req.file.filename}}, async (err, data)=>{
+        if(err){
+            console.log(err);
+            res.json({
+                success: false,
+                msg: "lỗi"
+            });
+        }else{
+            console.log("Profile thành công");
+            res.json({
+                success: true,
+                msg: "thành công",
+                data: req.file.filename
+            });
+        }
+    });
+};
+// 
+module.exports.postUserName = async (req, res)=>{
+    await User.findByIdAndUpdate(req.params.id, {$set:{'username' : req.body.username}}, async (err, data)=>{
+        if(err){
+            console.log(err);
+            res.json({
+                success: false,
+                msg: "lỗi"
+            });
+        }else{
+            console.log("Profile thành công");
+            res.json({
+                success: true,
+                msg: "thành công",
+                data: req.body.username
             });
         }
     });

@@ -17,7 +17,7 @@ var upload = multer({ storage: storage });
 /* GET users listing. */
 router.get('/tablestory', controller.getDataStorys);
 /* Post users listing. */
-router.post('/tablestory', upload.single('image'), controller.postStory);
+router.post('/tablestory', upload.array('image', 20), controller.postStory);
 /* Delete user */
 router.get('/tablestory/delete/:id', controller.delete);
 // Update user

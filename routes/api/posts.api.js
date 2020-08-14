@@ -29,7 +29,9 @@ router.get('/posts/:id', controller.getPostsUser);
 router.post('/posts', upload.array('image', 20), controller.postPosts);
 //
 router.post('/postbackground' , controller.postBackground);
+//
+router.get('/postsdetail/:id', controller.getPostsDetail);
 //Delete posts
-
+router.delete('/deleteposts/:id', controller.getDelete);
 //Edit posts
 module.exports = router;

@@ -4,20 +4,28 @@ var passwordHash = require('password-hash');
 
 //
 module.exports.getPosts = async (req, res) => {
-  await Posts.find({}).populate('iduser','username').exec(function (err, posts) {
+  await Posts.find({}).populate('iduser','username avata coverimage').exec(function (err, posts) {
     if (err) return handleError(err);
     res.send(posts);
   });
 };
 //
+module.exports.getPostsDetail = async (req, res)=>{
+  Posts.findOne({_id:req.params.id}).populate('iduser','username avata coverimage').exec(function (err, posts) {
+    if (err) console.log(err);;
+    res.send(posts);
+  });
+};
+//
 module.exports.getPostsUser = async (req, res) => {
-  await Posts.find({iduser: req.params.id}).populate('iduser','username').exec(function (err, posts) {
+  await Posts.find({iduser: req.params.id}).populate('iduser','username avata coverimage').exec(function (err, posts) {
     if (err) return handleError(err);
     res.send(posts);
   });
 };
 //
 module.exports.postPosts = async (req, res) => {
+  console.log(req.files[0]);
   let arrFileImg = []; // mảng hình ảnh
     req.files.forEach(element => {
         arrFileImg.push(element.filename);
@@ -56,15 +64,15 @@ module.exports.postPosts = async (req, res) => {
   });
   await newPost.save((err, posts) => {
       if(err) {
-      res.json({
-          success: false,
-          msg: "Posts new False"
-      });
+        res.json({
+            success: false,
+            msg: "Posts new False"
+        });
       } else {
         res.json({
-          success: true,
-          msg: "Posts new success"
-      });
+            success: true,
+            msg: "Posts new success"
+        });
       }
   });
 };
@@ -97,4 +105,46 @@ module.exports.postBackground = async (req, res) => {
       });
       }
   });
+};
+// delete
+module.exports.getDelete = async (req, res) => {
+  await Posts.findOne({_id: req.params.id}, (err, abc) => {
+    if (err) throw err;
+    else{
+        if(abc.file.image.length>10){
+            let pathimage = './public/uploads/'+abc.file.image;
+            try {
+                fs.unlinkSync(pathimage);
+                console.log("Xóa ảnh thành công");
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        if(abc.file.video.length>10){
+            let pathvideo = './public/uploads/'+abc.file.video;
+            try {
+                fs.unlinkSync(pathvideo);
+                console.log("Xóa video thành công");
+            } catch (error) {
+                console.error(error);
+            } 
+        } 
+    }
+        
+    });
+    await Posts.findByIdAndDelete({_id: req.params.id}, function(err, posts) {
+        if (err) {
+          console.log(err);
+          res.json({
+              success: false,
+              msg: "Posts new fail"
+          });
+        }
+        else{
+          res.json({
+              success: true,
+              msg: "Posts new success"
+          });
+        }
+    });
 };

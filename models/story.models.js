@@ -9,12 +9,12 @@ var StorysSchema = new mongoose.Schema({
         document:
         {
             type:String,
-            required: true
+            require: true
         },
         color:
         {
             type:String,
-            required: true
+            require: true
         }
     },
     file:[String],

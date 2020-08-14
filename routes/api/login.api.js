@@ -8,4 +8,5 @@ var controller = require('../../controllers/api/login.api.controller');
 router.post('/login', controller.postlogin);
 
 router.post("/register", controller.postRegister);
+
 module.exports = router;

@@ -12,7 +12,11 @@ module.exports.getDataStorys = async (req, res) => {
 };
 //
 module.exports.postStory = async (req, res) => {
-    var fileimage = req.file.filename;
+    let arrFileImg = []; // mảng hình ảnh
+    req.files.forEach(element => {
+        arrFileImg.push(element.filename);
+    });
+    console.log("asdasda "+arrFileImg);
     await Storys.findOne({iduser : req.signedCookies.cookieid}, async (err,data) =>{
         if(err){
             return handleError(err);
@@ -23,31 +27,31 @@ module.exports.postStory = async (req, res) => {
                 let newStorys = await new Storys({
                     iduser: req.signedCookies.cookieid,
                     text:{
-                        document: req.body.document,
-                        color: req.body.color
+                        document: "",
+                        color: ""
                     },
-                    file:[fileimage],
+                    file:arrFileImg,
                     numberLike: [],
                     createdAt: new Date(),
                     updatedAt: new Date()
                 });
                 await newStorys.save((err, storys) => {
                     if(err) {
-                    res.json({
-                        success: false,
-                        msg: "Failed to add author"
-                    });
+                        console.log(err);
+                        res.json({
+                            success: false,
+                            msg: "Failed to add author"
+                        });
                     } else {
                         res.redirect('tablestory');
                     }
                 });
             }else{
                 await Storys.findByIdAndUpdate(data._id, {$addToSet:{
-                    file:[
-                        fileimage
-                    ] 
+                    file:arrFileImg
                 }}, (err, data) => {
                     if(err) {
+                        console.log(err);
                         res.json({
                             success: false,
                             msg: "Failed to add author"

@@ -29,7 +29,11 @@ var notificationSchema = mongoose.Schema({
         title:{
             type: String,
             require: true
-        },    
+        },
+        typeLike: {
+            type:Number,
+            require : true
+        },  
         createdAt:{
             type: Date, 
             default: Date.now

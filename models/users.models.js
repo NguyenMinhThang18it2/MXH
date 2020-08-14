@@ -17,11 +17,11 @@ var userSchema = new mongoose.Schema({
     },
     avata: {
         type:String,
-        required: true
+        require: true
     },
     coverimage:{
         type:String,
-        required: true
+        require: true
     }
 });
 

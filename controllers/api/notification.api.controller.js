@@ -19,3 +19,24 @@ module.exports.getNotification = async (req, res)=>{
             });
     });
 };
+//
+module.exports.updateNotification = async (req, res) => {
+    console.log("vô");
+    await Notification.updateOne({iduser: req.params.id},{$set : {
+        "listnotification.$[].status" : true
+    }}, async (err, data) => {
+        if(err){
+            console.log(err);
+            res.json({
+                success: false,
+                msg: "Read all False"
+            });
+        } 
+        else{
+            res.json({
+                success: true,
+                msg: "Real all success"
+            });
+        };
+    });
+};

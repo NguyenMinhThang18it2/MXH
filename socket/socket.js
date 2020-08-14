@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
                     }else if(data.address === 'android'){
                         sendSocket = 'id commentposts android';
                     }
-                    console.log(sendSocket);
+                    console.log("lalalal "+sendSocket);
                     socket.emit(sendSocket, {id:cmt._id});
                     await Comment.findOne({_id: cmt._id})
                         .populate('idposts', 'iduser')
@@ -134,7 +134,7 @@ io.on('connection', (socket) => {
     // get all cmt
     socket.on('show commentposts', async (data) => {
         
-        await Comment.find({idposts: data.idposts}).populate('iduser','username avata').exec(function (err, datacmt) {
+        await Comment.find({idposts: data.idposts}).populate('iduser','username avata coverimage').exec(function (err, datacmt) {
             if (err) return handleError(err);
             socket.emit('all commentposts', datacmt);
             
@@ -148,6 +148,7 @@ io.on('connection', (socket) => {
             await Posts.findByIdAndUpdate(data.idposts, {$addToSet:{
                 numberLike:{
                     iduserLike : data.iduser,
+                    typeLike: data.typelike
                 }
             }}, (err, data) => {
                 if(err) {
@@ -190,7 +191,7 @@ io.on('connection', (socket) => {
                     id : result._id,
                     numberlikeposts: result.numberLike.length,
                     userlike: result.numberLike
-                });``
+                });
                 // update notify
                 
                 if(checkLike === true){
@@ -205,6 +206,7 @@ io.on('connection', (socket) => {
                                             iduserNotify: data.iduser,
                                             status: false,
                                             title: 'likeposts',
+                                            typeLike: data.typelike,
                                             createdAt: new Date(),
                                             updatedAt: new Date()
                                         }]
@@ -372,11 +374,9 @@ io.on('connection', (socket) => {
                             model: 'User'
                         }, async (err, notify)=>{
                             if(err) throw err;
-                            // await socket.broadcast.to(people[datafollow.FollowUser]).emit('send notification to client', {
-                            //     sendNotify: datafollow.FollowUser,
-                            //     userNotification: notify,
-                            //     action: 'addfriend'
-                            // });
+                            await socket.broadcast.to(people[result.iduser._id]).emit('update notify android', {
+                                action:'addfriend'
+                            });
                         });
                     });
                 });
@@ -420,10 +420,18 @@ io.on('connection', (socket) => {
                                                         title: 'addfriend'
                                                     }
                                                 }},async (err, kq)=>{
-                                                    if(err) throw err;
+                                                    if(err) {
+                                                        socket.emit('add friend success',{
+                                                            success: false,
+                                                            msg: "Posts new success"
+                                                        });
+                                                    }
                                                     else{
                                                         console.log("delete notication success!");
-                                                        socket.emit('add friend success','success');
+                                                        socket.emit('add friend success',{
+                                                            success: true,
+                                                            msg: "Posts new success"
+                                                        });
                                                     }
                                                 });
                                             }

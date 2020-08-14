@@ -32,6 +32,10 @@ var PostsSchema = new mongoose.Schema({
     numberLike:[{
         iduserLike:{
             type:mongoose.Schema.Types.ObjectId, ref: 'User' 
+        },
+        typeLike: {
+            type:Number,
+            require : true
         }
     }],
     numberCmt: 

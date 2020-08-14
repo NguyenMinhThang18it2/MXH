@@ -31,7 +31,10 @@ var apithemeRouter = require('./routes/api/themestatus.api');
 var apiprofileRouter  = require('./routes/api/profile.api');
 var apinotificationRouter = require('./routes/api/notification.api'); 
 var apifollowerRouter = require('./routes/api/follower.api');
-var apifriendRouter = require('./routes/api/friends.api')
+var apifriendRouter = require('./routes/api/friends.api');
+var apicommentRouter = require('./routes/api/comment.api');
+//
+var apicheckloginRouter = require('./routes/api/checktoken.api');
 
 var app = express();
 var io = require('./socket/socket');
@@ -68,13 +71,15 @@ app.use('/admin',auth.authentication, friendRouter);
 app.use('/admin',auth.authentication, notification);
 //api
 app.use('/api', apiloginRouter);
+app.use('/api', authJWT.authenticationJWT, apicheckloginRouter);
 app.use('/api', authJWT.authenticationJWT, apipostsRouter);
 app.use('/api', authJWT.authenticationJWT, apistoryRouter);
 app.use('/api', authJWT.authenticationJWT, apithemeRouter);
 app.use('/api', authJWT.authenticationJWT, apiprofileRouter);
-app.use('/api', authJWT.authenticationJWT, apinotificationRouter);apifollowerRouter
+app.use('/api', authJWT.authenticationJWT, apinotificationRouter);
 app.use('/api', authJWT.authenticationJWT, apifollowerRouter);
 app.use('/api', authJWT.authenticationJWT, apifriendRouter);
+app.use('/api', authJWT.authenticationJWT, apicommentRouter);
 
 app.use('/test', authJWT.authenticationJWT, (req, res) =>{
     res.render('./admin/master/test');
