@@ -143,8 +143,7 @@ io.on('connection', (socket) => {
     //Like Post
     socket.on('Like posts to server', async (data) =>{
         console.log(data);
-        var checkLike = false;
-        if(data.action == 'like'){
+        if(data.action === 'like'){
             await Posts.findByIdAndUpdate(data.idposts, {$addToSet:{
                 numberLike:{
                     iduserLike : data.iduser,
@@ -157,12 +156,26 @@ io.on('connection', (socket) => {
                         msg: "Failed to add author"
                     });
                 }else{
-                    console.log('like' +data);
+                    console.log('like thành công');
                 };
             });
-            checkLike = true;
-        };
-        if(data.action == 'dislike'){
+        }
+        if(data.action === 'updatelike'){
+            console.log("aaaaaaaaaaaaaaaa");
+            await Posts.updateOne({_id: data.idposts, "numberLike.iduserLike":data.iduser},{$set:{
+                "numberLike.$.typeLike": data.typelike
+            }}, (err, data) => {
+                if(err) {
+                    res.json({
+                        success: false,
+                        msg: "Failed to add author"
+                    });
+                }else{
+                    console.log('update like thành công');
+                };
+            });
+        }
+        if(data.action === 'dislike'){
             await Posts.findByIdAndUpdate(data.idposts, {$pull:{
                 numberLike:{
                     iduserLike : data.iduser,
@@ -174,11 +187,20 @@ io.on('connection', (socket) => {
                         msg: "Failed to add author"
                     });
                 }else{
-                    console.log( 'dislike' +data);
+                    console.log( 'dislike thành công');
                 };
             });
-            checkLike = false;
         }
+        await Posts.findOne({_id: data.idposts}).populate('iduser','username avata coverimage').exec( async (err, kq) =>{
+            if(err) console.log(err);
+            else{
+                await io.emit('Like posts to client', {
+                    id : kq._id,
+                    numberlikeposts: kq.numberLike.length,
+                    userlike: kq,
+                });
+            }
+        });
         await Posts.findOne({_id: data.idposts}).populate('iduser','username avata').populate('numberLike.iduserLike','username avata').exec( async (err, result) => {
             if(err) {
                 res.json({
@@ -187,19 +209,14 @@ io.on('connection', (socket) => {
                 });
             }else{
                 console.log(result);
-               await io.emit('Like posts to client', {
-                    id : result._id,
-                    numberlikeposts: result.numberLike.length,
-                    userlike: result.numberLike
-                });
                 // update notify
-                
-                if(checkLike === true){
-                    result.numberLike.forEach(async (like) =>{
-                        if(String(data.iduser) === String(like.iduserLike._id) && String(data.iduser) != String(result.iduser._id)){
-                            await Notification.findOne({iduser: result.iduser._id}, async (err,notify)=>{
-                                if(err) throw err;
-                                else{
+                result.numberLike.forEach(async (like) =>{
+                    // kiểm tra user like phải có trong danh sách like của bài viết và user like không phải chủ bài viết này
+                    if(String(data.iduser) === String(like.iduserLike._id) && String(data.iduser) != String(result.iduser._id)){
+                        await Notification.findOne({iduser: result.iduser._id}, async (err,notify)=>{
+                            if(err) throw err;
+                            else{
+                                if(data.action === 'like'){
                                     await Notification.findByIdAndUpdate(notify._id, {$addToSet:{
                                         listnotification:[{
                                             idPosts: data.idposts,
@@ -212,7 +229,7 @@ io.on('connection', (socket) => {
                                         }]
                                     }}, async (err, kq)=>{
                                         if(err) throw err;
-                                        console.log('cập nhật thông báo thành công');
+                                        console.log('cập nhật thông báo thành công like');
                                         // send notify
                                         await socket.broadcast.to(people[result.iduser._id]).emit('send notification to client', {
                                             sendNotify: result.iduser._id,
@@ -224,17 +241,56 @@ io.on('connection', (socket) => {
                                             action:'likeposts'
                                         });
                                     });
-                                    console.log({
-                                        sendNotify: result.iduser._id,
-                                        userPosts: result.iduser.username,
-                                        userLike: like.iduserLike,
-                                        action: 'likeposts'
+                                }else if(data.action === 'updatelike'){
+                                    await Notification.updateOne(
+                                        {
+                                            _id: notify._id, 
+                                            "listnotification.idPosts": data.idposts,
+                                            "listnotification.iduserNotify": data.iduser
+                                        }, {$set: {
+                                            "listnotification.$.typeLike": data.typelike,
+                                            "listnotification.$.status" : false
+                                    }},  async (err, kq)=>{
+                                        if(err) throw err;
+                                        console.log('cập nhật thông báo thành công update');
+                                        // send notify
+                                        //phía web mà chưa lm nên tạm bỏ
+                                        // await socket.broadcast.to(people[result.iduser._id]).emit('send notification to client', {
+                                        //     sendNotify: result.iduser._id,
+                                        //     userPosts: result.iduser.username,
+                                        //     userLike: like.iduserLike,
+                                        //     action: 'likeposts'
+                                        // });
+                                        // phía android
+                                        await socket.broadcast.to(people[result.iduser._id]).emit('update notify android', {
+                                            action:'likeposts'
+                                        });
                                     });
                                 }
-                            });
-                        }
-                    });
-                }
+                            }
+                        });
+                    }
+                    // xóa thông báo khi người dùng hủy like
+                    if(data.action === 'dislike'){
+                        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                        await Notification.updateOne(
+                            {
+                                iduser: result.iduser._id
+                            }, {$pull: {
+                            listnotification:{
+                                idPosts: data.idposts,
+                                iduserNotify : data.iduser,
+                                title: "likeposts"
+                            }
+                        }}, (err, data) => {
+                            if(err) {
+                                console.log(err);
+                            }else{
+                                console.log("xóa thông báo cũ thành công");
+                            };
+                        });
+                    }
+                });
             }
         });
     });
