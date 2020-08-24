@@ -205,6 +205,7 @@ $(function () {
         idposts: idpostsajax,
         iduser: iduser,
         action: action,
+        typelike: 0
       });
     });
     // start listen event Like post

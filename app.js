@@ -33,6 +33,7 @@ var apinotificationRouter = require('./routes/api/notification.api');
 var apifollowerRouter = require('./routes/api/follower.api');
 var apifriendRouter = require('./routes/api/friends.api');
 var apicommentRouter = require('./routes/api/comment.api');
+var apisearchRouter = require('./routes/api/search.api');
 //
 var apicheckloginRouter = require('./routes/api/checktoken.api');
 
@@ -80,6 +81,7 @@ app.use('/api', authJWT.authenticationJWT, apinotificationRouter);
 app.use('/api', authJWT.authenticationJWT, apifollowerRouter);
 app.use('/api', authJWT.authenticationJWT, apifriendRouter);
 app.use('/api', authJWT.authenticationJWT, apicommentRouter);
+app.use('/api', authJWT.authenticationJWT, apisearchRouter);
 
 app.use('/test', authJWT.authenticationJWT, (req, res) =>{
     res.render('./admin/master/test');

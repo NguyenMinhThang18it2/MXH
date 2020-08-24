@@ -5,11 +5,85 @@ var User = require('../models/users.models');
 var Notification = require('../models/notification.models');
 var Follow = require('../models/follow.models');
 var Friend = require('../models/friends.models');
-// const { find } = require('../models/comment.models');
+var StatusUser = require('../models/status_users.models');
 var people={}; 
 
 io.on('connection', (socket) => {
+    // user conect
     console.log('a user connected');
+    socket.on('chat message', async (data) => {
+        // add id user connect into people{}
+        people[data] = socket.id;
+        console.log(socket.id);
+        console.log(people[data]);
+        console.log(people);
+        // update status user
+        // await StatusUser.find({}).exec(async (err, statususer)=>{
+        //     if(err) console.log(err+'');
+        //     else{
+        //          
+        //         }
+        //     }
+        // });
+        let check = false;
+       // load data
+        let loadStatusUser =() =>{
+            return new Promise((rs,rj)=>{
+                StatusUser.find({}).then(result=>{
+                    rs(result);
+                }).catch((err)=>rj(err))
+            })
+        }
+        // check data của iduser login tồn tại hay chưa
+        let checkStatusUser = (statusUser)=>{
+            for (let index = 0; index < statusUser.length; index++) {
+                const element = statusUser[index];
+                if(String(element.iduser) === String(data)){
+                    check = true;
+                    break;
+                }else{
+                    check = false;
+                }
+            }
+            return check;
+        }
+        // cập nhật hoặc tạo mới csdl
+        let updateStatusUser = (x) =>{
+            if(x === true){
+                    StatusUser.updateOne({iduser: data}, {$set: {
+                        status: true,
+                        createdAt: new Date()
+                    }}, (err, kq) => {
+                        if(err) console.log(er +'');
+                        else console.log("update status true 1 user thành công");
+                    });
+            }else{
+                let newStatusUser = new StatusUser({
+                    iduser : data,
+                    status: true,
+                    createdAt: new Date()
+                });
+                newStatusUser.save((err, result)=>{
+                    if(err) console.log(err+'');
+                    else console.log("update status true user thành công");
+                });
+            }
+        }
+        await loadStatusUser()
+            .then((result)=>checkStatusUser(result))
+            .then(x=>updateStatusUser(x))
+            .catch(err=>console.log(err+''))
+
+        await Friend.findOne({iduser: data}, async (err, kq)=>{
+            if(err) console.log(err +'');
+            else{
+                // gửi cho tất cả bạn bè trong danh sách bạn bè
+                kq.listFriend.forEach(async (arr)=>{
+                    socket.broadcast.to(people[arr.idfriend]).emit('staus user connect', 'a user connected');
+                });
+            }
+        });
+    });
 
     socket.on('join room cmt', (data) => {
         socket.join(data);
@@ -20,21 +94,31 @@ io.on('connection', (socket) => {
         socket.leave(data);
         console.log(io.sockets.adapter.rooms[data]);
     });
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         console.log('a user disconnect');
-        Object.keys(people).forEach(function(key){
-            if(people[key]==socket.id)
-              delete people[key];
+        Object.keys(people).forEach(async (key)=>{
+            if(people[key]===socket.id){
+                delete people[key];
+                await StatusUser.updateOne({iduser: key}, {$set: {
+                    status: false,
+                    createdAt: new Date()
+                }}, (err, kq) => {
+                    if(err) console.log(er +'');
+                    else console.log("update status false user thành công");
+                });
+                await Friend.find({iduser: key}, async (err, kq)=>{
+                    if(err) console.log(er +'');
+                    else{
+                        // gửi cho tất cả bạn bè trong danh sách bạn bè
+                        kq.listFriend.forEach(async (arr)=>{
+                            socket.broadcast.to(people[arr.idfriend]).emit('staus user connect', 'a user connected');
+                        });
+                    }
+                });
+            }
           });
-        console.log(people);
     });
 
-    socket.on('chat message', (data) => {
-        people[data] = socket.id;
-        console.log(socket.id);
-        console.log(people[data]);
-        console.log(people);
-    });
     // post comment
     socket.on('post commentposts', async (data) => {
         console.log(data);
