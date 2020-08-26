@@ -2,18 +2,18 @@ var mongoose = require('mongoose');
 
 var replyCmtSchema = new mongoose.Schema({
     idcmt:{
-        type: mongoose.Schema.type.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         require: true,
         ref: 'Cmt'
     },
     idposts:{
-        type: mongoose.Schema.type.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         require: true,
         ref: 'Posts'
     },
     listCmt:[{
         iduser:{
-            type: mongoose.Schema.type.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             require: true,
             ref: 'User'
         },
@@ -25,12 +25,7 @@ var replyCmtSchema = new mongoose.Schema({
             image: 
             {
                 type:String,
-                required: true
-            },
-            video: 
-            {
-                type:String,
-                required: true
+                require: true
             }
         },
         numberLike:[{

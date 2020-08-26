@@ -23,6 +23,7 @@ var commentRouter = require('./routes/comment');
 var followRouter = require('./routes/follower');
 var friendRouter = require('./routes/friends');
 var notification = require('./routes/notification');
+var mess = require('./routes/mess');
 // api
 var apiloginRouter = require('./routes/api/login.api');
 var apipostsRouter = require('./routes/api/posts.api');
@@ -34,6 +35,7 @@ var apifollowerRouter = require('./routes/api/follower.api');
 var apifriendRouter = require('./routes/api/friends.api');
 var apicommentRouter = require('./routes/api/comment.api');
 var apisearchRouter = require('./routes/api/search.api');
+var apistatususerRouter = require('./routes/api/status_user.api');
 //
 var apicheckloginRouter = require('./routes/api/checktoken.api');
 
@@ -62,14 +64,15 @@ app.use('/logout', function(req, res){
   res.clearCookie('cookieid');
   res.redirect('/login');
 });
-app.use('/admin',auth.authentication, usersRouter);
-app.use('/admin',auth.authentication, postsRouter);
-app.use('/admin',auth.authentication, storyRouter);
-app.use('/admin',auth.authentication, themeRouter);
-app.use('/admin',auth.authentication, commentRouter);
-app.use('/admin',auth.authentication, followRouter);
-app.use('/admin',auth.authentication, friendRouter);
-app.use('/admin',auth.authentication, notification);
+app.use('/admin', auth.authentication, usersRouter);
+app.use('/admin', auth.authentication, postsRouter);
+app.use('/admin', auth.authentication, storyRouter);
+app.use('/admin', auth.authentication, themeRouter);
+app.use('/admin', auth.authentication, commentRouter);
+app.use('/admin', auth.authentication, followRouter);
+app.use('/admin', auth.authentication, friendRouter);
+app.use('/admin', auth.authentication, notification);
+app.use('/admin', auth.authentication, mess);
 //api
 app.use('/api', apiloginRouter);
 app.use('/api', authJWT.authenticationJWT, apicheckloginRouter);
@@ -82,6 +85,7 @@ app.use('/api', authJWT.authenticationJWT, apifollowerRouter);
 app.use('/api', authJWT.authenticationJWT, apifriendRouter);
 app.use('/api', authJWT.authenticationJWT, apicommentRouter);
 app.use('/api', authJWT.authenticationJWT, apisearchRouter);
+app.use('/api', authJWT.authenticationJWT, apistatususerRouter);
 
 app.use('/test', authJWT.authenticationJWT, (req, res) =>{
     res.render('./admin/master/test');

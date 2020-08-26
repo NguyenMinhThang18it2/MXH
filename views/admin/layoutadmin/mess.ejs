@@ -1,0 +1,9 @@
+<% messall.forEach((mess)=>{ %>
+    <% for(let i = 0; i < mess.members.length; i++){ 
+        let element = mess.members[i];
+        if(String(element.iduser) !== String(user._id)){
+        %>
+        <p><%= element.iduser %></p>
+    <% break;
+        }} %>
+<% }) %>

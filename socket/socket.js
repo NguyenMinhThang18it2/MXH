@@ -1,99 +1,87 @@
-var io = require('socket.io')();
-var Comment = require('../models/comment.models');
-var Posts = require('../models/posts.models');
-var User = require('../models/users.models');
-var Notification = require('../models/notification.models');
-var Follow = require('../models/follow.models');
-var Friend = require('../models/friends.models');
-var StatusUser = require('../models/status_users.models');
-var people={}; 
+const io = require('socket.io')();
+const Comment = require('../models/comment.models');
+const Posts = require('../models/posts.models');
+const User = require('../models/users.models');
+const Notification = require('../models/notification.models');
+const Follow = require('../models/follow.models');
+const Friend = require('../models/friends.models');
+const StatusUser = require('../models/status_users.models');
+const Mess = require('../models/mess.model');
+const people={}; 
 
 io.on('connection', (socket) => {
     // user conect
     console.log('a user connected');
     socket.on('chat message', async (data) => {
-        // add id user connect into people{}
-        people[data] = socket.id;
-        console.log(socket.id);
-        console.log(people[data]);
-        console.log(people);
-        // update status user
-        // await StatusUser.find({}).exec(async (err, statususer)=>{
-        //     if(err) console.log(err+'');
-        //     else{
-        //          
-        //         }
-        //     }
-        // });
-        let check = false;
-       // load data
-        let loadStatusUser =() =>{
-            return new Promise((rs,rj)=>{
-                StatusUser.find({}).then(result=>{
-                    rs(result);
-                }).catch((err)=>rj(err))
-            })
-        }
-        // check data của iduser login tồn tại hay chưa
-        let checkStatusUser = (statusUser)=>{
-            for (let index = 0; index < statusUser.length; index++) {
-                const element = statusUser[index];
-                if(String(element.iduser) === String(data)){
-                    check = true;
-                    break;
-                }else{
-                    check = false;
-                }
+        if(data !== '') {
+            // add id user connect into people{}
+            people[data] = socket.id;
+            console.log(socket.id);
+            console.log(people[data]);
+            console.log(people);
+
+            let check = false;
+            // load data
+            let loadStatusUser =() =>{
+                return new Promise((rs,rj)=>{
+                    StatusUser.find({}).then(result=>{
+                        rs(result);
+                    }).catch((err)=>rj(err))
+                })
             }
-            return check;
-        }
-        // cập nhật hoặc tạo mới csdl
-        let updateStatusUser = (x) =>{
-            if(x === true){
-                    StatusUser.updateOne({iduser: data}, {$set: {
+            // check data của iduser login tồn tại hay chưa
+            let checkStatusUser = (statusUser)=>{
+                for (let index = 0; index < statusUser.length; index++) {
+                    const element = statusUser[index];
+                    if(String(element.iduser) === String(data)){
+                        check = true;
+                        break;
+                    }else{
+                        check = false;
+                    }
+                }
+                return check;
+            }
+            // cập nhật hoặc tạo mới csdl
+            let updateStatusUser = (x) =>{
+                if(x === true){
+                        StatusUser.updateOne({iduser: data}, {$set: {
+                            status: true,
+                            createdAt: new Date()
+                        }}, (err, kq) => {
+                            if(err) console.log(er +'');
+                            else console.log("update status true 1 user thành công");
+                        });
+                }else{
+                    let newStatusUser = new StatusUser({
+                        iduser : data,
                         status: true,
                         createdAt: new Date()
-                    }}, (err, kq) => {
-                        if(err) console.log(er +'');
-                        else console.log("update status true 1 user thành công");
                     });
-            }else{
-                let newStatusUser = new StatusUser({
-                    iduser : data,
-                    status: true,
-                    createdAt: new Date()
-                });
-                newStatusUser.save((err, result)=>{
-                    if(err) console.log(err+'');
-                    else console.log("update status true user thành công");
-                });
+                    newStatusUser.save((err, result)=>{
+                        if(err) console.log(err+'');
+                        else console.log("update status true user thành công");
+                    });
+                }
             }
+            await loadStatusUser()
+                .then((result)=>checkStatusUser(result))
+                .then(x=>updateStatusUser(x))
+                .catch(err=>console.log(err+''))
+
+            await Friend.findOne({iduser: data}, async (err, kq)=>{
+                if(err) console.log(err +'');
+                else{
+                    // gửi cho tất cả bạn bè trong danh sách bạn bè
+                    kq.listFriend.forEach(async (arr)=>{
+                        socket.broadcast.to(people[arr.idfriend]).emit('status user connect', 'a user connected');
+                    });
+                }
+            });
         }
-        await loadStatusUser()
-            .then((result)=>checkStatusUser(result))
-            .then(x=>updateStatusUser(x))
-            .catch(err=>console.log(err+''))
-
-        await Friend.findOne({iduser: data}, async (err, kq)=>{
-            if(err) console.log(err +'');
-            else{
-                // gửi cho tất cả bạn bè trong danh sách bạn bè
-                kq.listFriend.forEach(async (arr)=>{
-                    socket.broadcast.to(people[arr.idfriend]).emit('staus user connect', 'a user connected');
-                });
-            }
-        });
+        
     });
 
-    socket.on('join room cmt', (data) => {
-        socket.join(data);
-        console.log(io.sockets.adapter.rooms[data]);
-    });
-    socket.on('leave room cmt' , (data) =>{
-        console.log(data);
-        socket.leave(data);
-        console.log(io.sockets.adapter.rooms[data]);
-    });
     socket.on('disconnect', async () => {
         console.log('a user disconnect');
         Object.keys(people).forEach(async (key)=>{
@@ -106,18 +94,29 @@ io.on('connection', (socket) => {
                     if(err) console.log(er +'');
                     else console.log("update status false user thành công");
                 });
-                await Friend.find({iduser: key}, async (err, kq)=>{
+                await Friend.findOne({iduser: key}, async (err, kq)=>{
                     if(err) console.log(er +'');
                     else{
                         // gửi cho tất cả bạn bè trong danh sách bạn bè
                         kq.listFriend.forEach(async (arr)=>{
-                            socket.broadcast.to(people[arr.idfriend]).emit('staus user connect', 'a user connected');
+                            socket.broadcast.to(people[arr.idfriend]).emit('status user connect', 'a user disconnected');
                         });
                     }
                 });
             }
           });
     });
+
+    socket.on('join room cmt', (data) => {
+        socket.join(data);
+        console.log(io.sockets.adapter.rooms[data]);
+    });
+    socket.on('leave room cmt' , (data) =>{
+        console.log(data);
+        socket.leave(data);
+        console.log(io.sockets.adapter.rooms[data]);
+    });
+    
 
     // post comment
     socket.on('post commentposts', async (data) => {
@@ -378,6 +377,10 @@ io.on('connection', (socket) => {
             }
         });
     });
+    // Like Comment chưa làm
+    socket.on('Like comment posts to server', async (data)=>{
+        // idcmt, iduserlike, typeLike,action
+    });
     // get comment from android
     // get all notification
     socket.on("get all notification", async (data)=>{
@@ -584,6 +587,14 @@ io.on('connection', (socket) => {
                 });
             };
         });
+        let newMess = await new Mess({
+            members:[
+                {iduser: datafriend.iduserLogin},
+                {iduser: datafriend.replyfriend},
+            ],
+            content:[]
+        });
+        await newMess.save().then(x=>console.log("tạo chat mới thành công")).catch(err=>console.log(err+''))
     });
 });
 
