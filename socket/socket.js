@@ -7,6 +7,7 @@ const Follow = require('../models/follow.models');
 const Friend = require('../models/friends.models');
 const StatusUser = require('../models/status_users.models');
 const Mess = require('../models/mess.model');
+const reqlyCmt = require('../models/replycomment.models');
 const people={}; 
 
 io.on('connection', (socket) => {
@@ -199,6 +200,78 @@ io.on('connection', (socket) => {
                 }
         });
         
+    });
+    // reply comment
+    socket.on('reply comment to server', async (data)=>{
+
+        console.log(data);
+        let newReplyCmt = new reqlyCmt({
+            idcmt: data.idcmt,
+            idposts: data.idposts,
+            listCmt:[{
+                iduser: data.iduserreply,
+                document: data.document,
+                numberLike:[],
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }]
+        })
+        // kiểm tra xem dữ liệu với idcmt có hay chư, nếu chưa tạo mói, co rồi thì cập nhật thêm
+        await reqlyCmt.findOne({idcmt: data.idcmt})
+            .then(dataRCmt =>{ 
+                if(dataRCmt) {
+                    console.log("vào đây rồi");
+                    reqlyCmt.findOneAndUpdate({idcmt: data.idcmt}, {$addToSet:{
+                        listCmt:[{
+                            iduser: data.iduserreply,
+                            document: data.document,
+                            numberLike:[],
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        }]
+                    }}).then(x=>console.log('update ok')).catch(err=>console.log(err+''));
+                }else{
+                    newReplyCmt.save().then(data => console.log("new reply ok")).catch(err => console.log(err +''));
+                }
+            }).catch(err=> console.log(err+''))
+        
+        
+        // gửi sự kiện cập nhật data xuông android
+        await io.to(data.idcmt).emit('reply comment to client', 'cập nhật lại data');
+        // cập nhật thông báo
+        // distinct lấy mảng các user reply ko trùng lặp
+        await reqlyCmt.findOne({idcmt: data.idcmt}).distinct('listCmt.iduser', async (err, arrUserReply)=>{
+            if(err) console.log(err+'');
+            else{
+                await reqlyCmt.findOne({idcmt: data.idcmt})
+                .populate('idcmt', 'iduser')
+                .populate('listCmt.iduser', 'username avata')
+                .then(datareply=>{
+                    // thêm user cmt chủ đề 
+                    arrUserReply.push(datareply.idcmt.iduser);
+                    console.log("aaaa array "+arrUserReply);
+                    // gửi thông báo cho tất cả user reply + user cmt chủ đề
+                    arrUserReply.forEach(async (element) => {
+                        if(String(element) !== String(data.iduserreply)){
+                            await Notification.findOneAndUpdate({iduser: element}, {$addToSet:{
+                                listnotification:[{
+                                    idPosts: data.idposts,
+                                    iduserNotify: data.iduserreply,
+                                    status: false,
+                                    title: 'replycomment',
+                                    createdAt: new Date(),
+                                    updatedAt: new Date()
+                                }]
+                            }})
+                            await socket.broadcast.to(people[element]).emit('update notify android', {
+                                arrUserCmt: arrUserReply,
+                                action: 'replycomment'
+                            });
+                        }
+                    });
+                })
+            }
+        })
     });
     //
     socket.on('id getcommentposts', async (data) => {
@@ -595,6 +668,12 @@ io.on('connection', (socket) => {
             content:[]
         });
         await newMess.save().then(x=>console.log("tạo chat mới thành công")).catch(err=>console.log(err+''))
+        await socket.emit('add friend success', "thành công");
+    });
+    // chat
+    socket.on('join room chat', async (data)=>{
+        socket.join(data);
+        console.log(io.sockets.adapter.rooms[data]);
     });
 });
 

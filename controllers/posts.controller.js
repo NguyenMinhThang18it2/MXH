@@ -133,7 +133,18 @@ module.exports.postPostnotfile = async (req, res) => {
 };
 //
 module.exports.edit = async (req, res) =>{
-    
+    console.log("ádsadsdas"+req.body.document);
+    await Posts.findByIdAndUpdate(req.params.id,{$set:{
+        document: req.body.document
+      }}).then(x=>{
+        res.redirect('/admin/tablepost');
+      }).catch(err=>{
+          console.log(err+'');
+        res.json({
+            success: false,
+            msg: "Posts update fail"
+        });
+      })
 };
 // ajax
 // like posts

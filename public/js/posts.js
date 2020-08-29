@@ -60,21 +60,19 @@
         // $('#playvideotable')[0].play();
     });
     // edit 
-    $('table').on('click', '#editbutton', function () {
+    $('table').on('click', '#editbuttonposts', function () {
         
         var $tr = $(this).closest('tr');
-        var iduser = $tr.find('td[data-iduser]').data('iduser');
-        var username = $tr.find('td[data-username]').data('username');
-        var email = $tr.find('td[data-email]').data('email');
-        var password = $tr.find('td[data-password]').data('password');
+        var postsid = $tr.find('td[data-postsid]').data('postsid');
+        var document = $tr.find('td[data-document]').data('document');
         // alert(username + " " + iduser+ " " + email+ " " + password);
 
-        $('h5.modal-title').html('Edit Admin Data: '+username);
-        $('#editname').val(username);
-        $('#editemail').val(email);
-        $('#editpassword').val(password);
+        // $('h5.modal-title').html('Edit Admin Data: '+username);
+        // $('#editname').val(username);
+        // $('#editemail').val(email);
+        $('#editdocument').val(document);
 
-        $("form#formEdit").attr('action', window.location.href+'/update/'+iduser);
+        $("form#formEdit").attr('action', window.location.href+'/update/'+postsid);
     });  
     // get time posts
     function dhms(t) {

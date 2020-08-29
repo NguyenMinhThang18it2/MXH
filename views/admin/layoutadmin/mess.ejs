@@ -1,9 +1,29 @@
-<% messall.forEach((mess)=>{ %>
-    <% for(let i = 0; i < mess.members.length; i++){ 
-        let element = mess.members[i];
-        if(String(element.iduser) !== String(user._id)){
-        %>
-        <p><%= element.iduser %></p>
-    <% break;
-        }} %>
-<% }) %>
+
+<div style="padding: 20px;">
+    <div class="row" style="border: 1px solid black;background: white;">
+        <div class="col-md-3" style="padding: 10px 20px;border-right: 1px solid black;">
+            <% messall.forEach((mess)=>{ %>
+                <% for(let i = 0; i < mess.members.length; i++){ 
+                    let element = mess.members[i];
+                    if(String(element.iduser) !== String(user._id)){
+                    %>
+                    <div class="item-user" onclick="clickitemchat('<%= element.iduser._id %>')">
+                        <img src="../../../uploads/<%= element.iduser.avata %>" alt="" style="width: 40px;height: 40px;border-radius: 50%;">
+                        <span><%= element.iduser.username %></span>
+                    </div>
+                <% break;
+                    }} %>
+            <% }) %>
+        </div>
+        <div class="col-md-9">
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    function clickitemchat(id){
+        alert(id);
+    }
+</script>
+

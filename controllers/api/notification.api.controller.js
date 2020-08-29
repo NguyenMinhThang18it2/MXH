@@ -40,3 +40,18 @@ module.exports.updateNotification = async (req, res) => {
         };
     });
 };
+// delete 
+module.exports.deleteNotifi = async (req, res) => {
+    await Notification.findByIdAndDelete(req.params.id)
+        .then(data => {
+            res.json({
+                success: true,
+                msg: "Delete Notifi success"
+            });
+        }).catch(err => {
+            res.json({
+                success: false,
+                msg: "Delete Notifi False"
+            });
+        })
+}

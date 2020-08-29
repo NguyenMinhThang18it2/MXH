@@ -106,6 +106,22 @@ module.exports.postBackground = async (req, res) => {
       }
   });
 };
+// update
+module.exports.getUpdate = async (req, res)=>{
+  await Posts.findByIdAndUpdate(req.params.id,{$set:{
+    document: req.body.document
+  }}).then(x=>{
+    res.json({
+        success: true,
+        msg: "Posts update success"
+    });
+  }).catch(err=>{
+    res.json({
+        success: false,
+        msg: "Posts update fail"
+    });
+  })
+};
 // delete
 module.exports.getDelete = async (req, res) => {
   await Posts.findOne({_id: req.params.id}, (err, abc) => {

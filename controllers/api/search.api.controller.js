@@ -13,23 +13,31 @@ module.exports.getData = async (req, res) =>{
 function escapeRegExp(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
+//
 module.exports.insertData = async (req, res) => {
     let searchHistory = await new SearchHistorySchema({
         iduser: req.body.id,
         key: req.body.key,
         createdAt: new Date()
     });
-    await searchHistory.save((err, result)=>{
-        if(err) {
-            res.json({
-                success: false,
-                msg: "Search new false!"
-            });
-          } else {
-            res.json({
-                success: true,
-                msg: "Search new success!"
-            });
-          }
-    });
+    await searchHistory.save().then(x=>{
+        res.json({
+            success: true,
+            msg: "Search new success!"
+        });
+    }).catch(err =>{
+        res.json({
+            success: false,
+            msg: "Search new false!"
+        });
+    })
+}
+//
+module.exports.getSearchHistory = async (req, res) =>{
+    await SearchHistorySchema.find({iduser: req.params.id}).sort(-1).limit(10)
+        .then(data =>{
+            res.send(data);
+        }).catch(err =>{
+            console.log(err +'');
+        })
 }

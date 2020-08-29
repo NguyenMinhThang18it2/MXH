@@ -36,6 +36,7 @@ var apifriendRouter = require('./routes/api/friends.api');
 var apicommentRouter = require('./routes/api/comment.api');
 var apisearchRouter = require('./routes/api/search.api');
 var apistatususerRouter = require('./routes/api/status_user.api');
+var apireplycmtRouter = require('./routes/api/replycmt.api');
 //
 var apicheckloginRouter = require('./routes/api/checktoken.api');
 
@@ -86,6 +87,7 @@ app.use('/api', authJWT.authenticationJWT, apifriendRouter);
 app.use('/api', authJWT.authenticationJWT, apicommentRouter);
 app.use('/api', authJWT.authenticationJWT, apisearchRouter);
 app.use('/api', authJWT.authenticationJWT, apistatususerRouter);
+app.use('/api', authJWT.authenticationJWT, apireplycmtRouter);
 
 app.use('/test', authJWT.authenticationJWT, (req, res) =>{
     res.render('./admin/master/test');

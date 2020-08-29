@@ -30,7 +30,7 @@ router.post('/tablepostsss', upload.array('image', 5), controller.tetsPostFIle);
 /* Delete user */
 router.get('/tablepost/delete/:id', controller.delete);
 // Update user
-router.post('tablepost/update/:id', controller.edit);
+router.post('/tablepost/update/:id', controller.edit);
 // ajax
 // Like
 router.get('/tablepost/likeposts', controller.likeposts);

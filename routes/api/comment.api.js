@@ -16,5 +16,8 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 // upload file Comment
 router.post('/comment/:id', upload.single('image'), controller.postFileComment);
-
+// delete
+router.delete('/deletecomment/:id', controller.deleteComment);
+// put
+router.put('/putcomment/:id', controller.putComment);
 module.exports = router;
