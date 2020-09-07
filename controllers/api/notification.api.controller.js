@@ -42,16 +42,24 @@ module.exports.updateNotification = async (req, res) => {
 };
 // delete 
 module.exports.deleteNotifi = async (req, res) => {
-    await Notification.findByIdAndDelete(req.params.id)
-        .then(data => {
-            res.json({
-                success: true,
-                msg: "Delete Notifi success"
-            });
-        }).catch(err => {
-            res.json({
+    await Notification.findOneAndUpdate({iduser: req.params.id}, { $pull: { 
+        listnotification: { 
+            iduserNotify: req.body.replyfriend, /// vẫn chưa xóa đc
+            title: 'addfriend'
+        }
+    }},async (err, kq)=>{
+        if(err) {
+            socket.emit('add friend success',{
                 success: false,
-                msg: "Delete Notifi False"
+                msg: "Posts new success"
             });
-        })
+        }
+        else{
+            console.log("delete notication success!");
+            socket.emit('add friend success',{
+                success: true,
+                msg: "Posts new success"
+            });
+        }
+    });
 }

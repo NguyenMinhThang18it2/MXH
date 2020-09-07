@@ -13,3 +13,22 @@ module.exports.getFriends = async (req, res) =>{
         }
     });
 };
+// 
+module.exports.deleteFriend = async (req, res) =>{
+    await Friend.findOneAndUpdate({iduser: req.params.id}, {$pull: {
+        listFriend:[{
+            idfriend: req.body.idfriend
+        }] 
+    }}).then(data => {
+        res.json({
+            success: true,
+            msg: "Delete friend success"
+        });
+    }).catch(err => {
+        console.log(err + " ");
+        res.json({
+            success: false,
+            msg: "Delete friend false"
+        });
+    })
+};

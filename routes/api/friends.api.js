@@ -4,4 +4,5 @@ var controller = require('../../controllers/api/friends.api.controller');
 
 router.get('/friend/:id', controller.getFriends);
 
+
 module.exports = router;

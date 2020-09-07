@@ -3,6 +3,9 @@ var mongoose = require('mongoose');
 var PostsSchema = new mongoose.Schema({
     iduser:{
         type: mongoose.Schema.Types.ObjectId, ref: 'User' 
+    },
+    idshareposts:{
+        type: mongoose.Schema.Types.ObjectId, ref: 'Posts' 
     }
     ,
     level:{
@@ -12,7 +15,7 @@ var PostsSchema = new mongoose.Schema({
     document: 
     {
         type:String,
-        required: true
+        require: true
     },
     file: {
         image:[String]
@@ -20,12 +23,12 @@ var PostsSchema = new mongoose.Schema({
         video: 
         {
             type:String,
-            required: true
+            require: true
         },
         background: 
         {
             type:String,
-            required: true
+            require: true
         }
     }
     ,

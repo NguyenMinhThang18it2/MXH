@@ -27,6 +27,8 @@ router.get('/posts', controller.getPosts);
 router.get('/posts/:id', controller.getPostsUser);
 // post posts
 router.post('/posts', upload.array('image', 20), controller.postPosts);
+// posts share
+router.post('/posts/share', controller.postSharePosts);
 //
 router.post('/postbackground' , controller.postBackground);
 //

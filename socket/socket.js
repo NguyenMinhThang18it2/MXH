@@ -347,15 +347,28 @@ io.on('connection', (socket) => {
                 };
             });
         }
-        await Posts.findOne({_id: data.idposts}).populate('iduser','username avata coverimage').exec( async (err, kq) =>{
+        await Posts.findOne({_id: data.idposts})
+            .populate('iduser','username avata coverimage')
+            .populate('idshareposts')
+            .exec( async (err, x) =>{
             if(err) console.log(err);
             else{
-                await io.emit('Like posts to client', {
-                    id : kq._id,
-                    numberlikeposts: kq.numberLike.length,
-                    userlike: kq,
+                await Posts.populate(x, {
+                  path: 'idshareposts.iduser',
+                  select: 'username avata coverimage',
+                  model: 'User'
+              }, async (err, kq)=>{
+                if(err) throw err;
+                    else{
+                        await io.emit('Like posts to client', {
+                            id : kq._id,
+                            numberlikeposts: kq.numberLike.length,
+                            userlike: kq,
+                        });
+                    }
                 });
             }
+            
         });
         await Posts.findOne({_id: data.idposts}).populate('iduser','username avata').populate('numberLike.iduserLike','username avata').exec( async (err, result) => {
             if(err) {
@@ -593,6 +606,10 @@ io.on('connection', (socket) => {
                             await socket.broadcast.to(people[result.iduser._id]).emit('update notify android', {
                                 action:'addfriend'
                             });
+                            // thành công trả về thằng gửi lên :v
+                            await socket.emit('add notification friend', {
+                                action:'addfriend'
+                            });
                         });
                     });
                 });
@@ -629,7 +646,7 @@ io.on('connection', (socket) => {
                                             if(err) throw err;
                                             else{
                                                 console.log(notify._id);
-                                                
+                                                // xáo thô
                                                 await Notification.findByIdAndUpdate(notify._id, { $pull: { 
                                                     listnotification: { 
                                                         iduserNotify: datafriend.replyfriend, /// vẫn chưa xóa đc
@@ -637,18 +654,30 @@ io.on('connection', (socket) => {
                                                     }
                                                 }},async (err, kq)=>{
                                                     if(err) {
-                                                        socket.emit('add friend success',{
-                                                            success: false,
-                                                            msg: "Posts new success"
-                                                        });
+                                                        console.log(err+'');
                                                     }
                                                     else{
                                                         console.log("delete notication success!");
-                                                        socket.emit('add friend success',{
-                                                            success: true,
-                                                            msg: "Posts new success"
-                                                        });
                                                     }
+                                                });
+                                            }
+                                        });
+                                        await Notification.findOneAndUpdate({iduser: datafriend.replyfriend}, {$addToSet:{
+                                            listnotification:[{
+                                                iduserNotify: data.iduserLogin,
+                                                status: false,
+                                                title: 'addfriendsuccess',
+                                                createdAt: new Date(),
+                                                updatedAt: new Date()
+                                            }]
+                                        }},async (err, kq)=>{
+                                            if(err) {
+                                                console.log(err+'');
+                                            }
+                                            else{
+                                                console.log("delete notication success!");
+                                                await socket.broadcast.to(people[datafriend.replyfriend]).emit('update notify android', {
+                                                    action:'addfriendsuccess'
                                                 });
                                             }
                                         });
@@ -675,6 +704,24 @@ io.on('connection', (socket) => {
         socket.join(data);
         console.log(io.sockets.adapter.rooms[data]);
     });
+    // share posts
+    socket.on('share posts to server', async (data) => {
+        // idposts, iduser notification, iduserShare
+        await Notification.findOneAndUpdate({iduser: data.iduser}, {$addToSet:{
+            listnotification:[{
+                idPosts: data.idposts,
+                iduserNotify: data.iduserShare,
+                status: false,
+                title: 'shareposts',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }]
+        }}).then(data => console.log('share posts notify OKi')).catch(err => console.log(err + ''));
+        await socket.broadcast.to(people[data.iduserShare]).emit('update notify android', {
+            action:'shareposts'
+        });
+        console.log("thông báo đã về");
+    })
 });
 
 module.exports = io;
